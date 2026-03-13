@@ -17,15 +17,27 @@
   </build>
 	<dependencies>
 	    <dependency>
-	      <groupId>com.azure</groupId>
-	      <artifactId>azure-identity</artifactId>
-	      <version>1.11.1</version>
-	    </dependency>
+		    <groupId>com.azure</groupId>
+			<artifactId>azure-identity</artifactId>
+			<version>1.18.2</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.azure.resourcemanager</groupId>
+			<artifactId>azure-resourcemanager</artifactId>
+			<version>2.60.0</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>io.github.cdimascio</groupId>
+		    <artifactId>dotenv-java</artifactId>
+			<version>3.2.0</version>
+		</dependency>
 	
-	    <dependency>
-	      <groupId>com.azure.resourcemanager</groupId>
-	      <artifactId>azure-resourcemanager</artifactId>
-	      <version>2.33.0</version>
-	    </dependency>
+		<dependency>
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>slf4j-simple</artifactId>
+		  <version>2.0.17</version>
+		</dependency>
 	  </dependencies>
   </project>
