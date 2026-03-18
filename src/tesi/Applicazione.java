@@ -23,6 +23,9 @@ public class Applicazione {
         String clientSecret = dotenv.get("AZURE_CLIENT_SECRET");
         String subscriptionId = dotenv.get("AZURE_SUBSCRIPTION_ID");
         String resourceGroupName = dotenv.get("AZURE_RESOURCE_GROUP");
+        
+        String passwordDatabase = dotenv.get("DATABASE_PASSWORD");
+        
 
         // Controllo rapido per evitare problemi
         if (clientId == null || tenantId == null || clientSecret == null || subscriptionId == null) {
@@ -53,7 +56,7 @@ public class Applicazione {
             // ***************** mi connetto al database ********************
             try {
             	// sto prendento un database di tipo mysql, salvato in un servere locale (il mio calcolatore), nominato db_tesi e senza password"
-    			String url = "jdbc:mysql://localhost/db_tesi?user=root&password=";		
+    			String url = "jdbc:mysql://localhost/db_tesi?user=root&password="+passwordDatabase;		
 
     			Connection conn = DriverManager.getConnection(url); // questo oggetto rappresenta la connessione con il database
     			
