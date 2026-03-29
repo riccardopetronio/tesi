@@ -89,7 +89,7 @@ public class GestoreComandiUtente {
 			}
 			System.out.print(" (username trovato)\n");
 			
-			Boolean risultato = this.daoU.autentificazione(password, utente);
+			Boolean risultato = PasswordHasher.verifyPassword(password, utente.getHash(), utente.getSalt());
 			if( risultato==false ) {
 				System.err.print("\noperazione fallita la tua passuord è errata\n\n");
 			}
