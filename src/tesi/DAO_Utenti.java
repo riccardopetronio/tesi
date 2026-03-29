@@ -60,10 +60,6 @@ public class DAO_Utenti {
 	    conn.close();
 	    System.out.println("Operazione di INSERT riuscira, chiudo la connessione\n");
 	}
-	
-	public Boolean autentificazione(String password, Utente u) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		
-		return PasswordHasher.verifyPassword(password, u.getHash(), u.getSalt());
-	}
+
 	
 }
