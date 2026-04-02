@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class DAO_Utenti {
 	
-	public Utente getPresenzaUtente(String user) throws SQLException {
+	public static Utente getPresenzaUtente(String user) throws SQLException {
 	    
 		System.out.println("Inizio operazione di SELECT (verifico presenza username)...");
 	    Connection conn = DatabaseConnector.creaConnessione();
@@ -36,10 +36,10 @@ public class DAO_Utenti {
 	    return u;
 	}
 	
-	public void aggiungiUtente(String user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException, SQLException {
+	public static void aggiungiUtente(String user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException, SQLException {
 		
 		String risultato[] = PasswordHasher.gerenaSaltAndHash(password);
-		System.out.println("\n\nHashing eseguito correttamente (ho generato salt e hash)");
+		System.out.println("\nHashing eseguito correttamente (ho generato salt e hash)");
 
 		String hash = risultato[0];
 		String salt = risultato[1];

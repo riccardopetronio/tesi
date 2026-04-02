@@ -5,8 +5,7 @@ public class Utente {
 	private String username;
 	private String hash;
 	private String salt;
-	private String cittadinanza;
-	
+	private String cittadinanza;	
 	
 	public Utente(String username, String hash, String salt) {
 		super();

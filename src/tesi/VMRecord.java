@@ -47,4 +47,9 @@ public class VMRecord {
 	public void setStato(String stato) {
 		this.stato = stato;
 	}
+	
+	@Override
+	public String toString() {
+		return "VM: [id=" + id + ", nome=" + nome + ", os=" + os + ", stato=" + stato + "]";
+	}
 }

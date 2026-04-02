@@ -5,7 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.LinkedList;
+import java.util.TreeMap;
 
 import com.azure.resourcemanager.compute.models.VirtualMachine;
 
@@ -13,7 +13,7 @@ public class DAO_VirtualMachines {
 	
 	
 	
-	public void aggiungiVM(VirtualMachine vm) throws SQLException {
+	public static void aggiungiVM(VirtualMachine vm) throws SQLException {
 		
 	    System.out.println("Inizio operazione di INSERT...");
 
@@ -34,7 +34,7 @@ public class DAO_VirtualMachines {
 	    System.out.println("Operazione riuscira, chiudo la connessione\n");
 	}
 	
-	public LinkedList<VMRecord> getAllVM() throws SQLException {
+	public static TreeMap<String, VMRecord> getAllVM() throws SQLException {
 		
 		System.out.println("Inizio operazione di SELECT...");
 
@@ -44,7 +44,7 @@ public class DAO_VirtualMachines {
 		String query = "SELECT * FROM virtual_machines";
 		ResultSet rs = st.executeQuery(query);
 		
-		LinkedList<VMRecord> risultato = new LinkedList<VMRecord>();
+		TreeMap<String, VMRecord> risultato = new TreeMap<String, VMRecord>();
 		while ( rs.next() ) {
 			String id = rs.getString("ID");
 			String nome = rs.getString("nome");
@@ -52,17 +52,38 @@ public class DAO_VirtualMachines {
 			String stato = rs.getString("stato");
 			
 			VMRecord vm = new VMRecord(id, nome, os, stato);
-			risultato.add(vm);
+			risultato.put(id, vm);
 		}
 		
 		st.close();
 		conn.close();
-	    System.out.print("Operazione di SELECT conclusa, connessione chiusa");
+	    System.out.print("Operazione di SELECT conclusa, connessione chiusa\n");
 	    return risultato;
 	}
 	
-	
-	
-	
-	
+	public static void aggiornaVM(VMRecord vm) throws SQLException {
+	    String sql = "UPDATE virtual_machines SET nome = ?, sistema_operativo = ?, stato = ? WHERE ID = ?";
+
+	    try (Connection conn = DatabaseConnector.creaConnessione();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setString(1, vm.getNome());
+	        ps.setString(2, vm.getOs());
+	        ps.setString(3, vm.getStato());
+	        ps.setString(4, vm.getId());
+
+	        ps.executeUpdate();
+	    }
+	}
+
+	public static void eliminaVM(String id) throws SQLException {
+	    String sql = "DELETE FROM virtual_machines WHERE ID = ?";
+
+	    try (Connection conn = DatabaseConnector.creaConnessione();
+	         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+	        ps.setString(1, id);
+	        ps.executeUpdate();
+	    }
+	}
 }
