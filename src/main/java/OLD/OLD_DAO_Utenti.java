@@ -1,4 +1,4 @@
-package tesi;
+package OLD;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -7,12 +7,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DAO_Utenti {
+import tesi.Utente;
+
+public class OLD_DAO_Utenti {
 	
+
 	public static Utente getPresenzaUtente(String user) throws SQLException {
 	    
 		System.out.println("Inizio operazione di SELECT (verifico presenza username)...");
-	    Connection conn = DatabaseConnector.creaConnessione();
+	    Connection conn = OLD_DatabaseConnector.creaConnessione();
 	    
 	    String query = "SELECT * FROM utenti WHERE username = ?";
 	    PreparedStatement pstmt = conn.prepareStatement(query);
@@ -38,20 +41,20 @@ public class DAO_Utenti {
 	
 	public static void aggiungiUtente(String user, String password) throws NoSuchAlgorithmException, InvalidKeySpecException, SQLException {
 		
-		String risultato[] = PasswordHasher.gerenaSaltAndHash(password);
+		//String risultato[] = PasswordHasher.gerenaSaltAndHash(password);
 		System.out.println("\nHashing eseguito correttamente (ho generato salt e hash)");
 
-		String hash = risultato[0];
-		String salt = risultato[1];
+		//String hash = risultato[0];
+		//String salt = risultato[1];
         
 		System.out.println("Inizio operazione di INSERT utente...");
 
-		Connection conn = DatabaseConnector.creaConnessione();
+		Connection conn = OLD_DatabaseConnector.creaConnessione();
 		PreparedStatement ps = conn.prepareStatement("INSERT INTO utenti(username, hash, salt) VALUES(?, ?, ?)");
 		
 		ps.setString(1, user);
-	    ps.setString(2, hash);
-	    ps.setString(3, salt);
+	    //ps.setString(2, hash);
+	    //ps.setString(3, salt);
 		
 	    ps.executeUpdate();
 	    ps.clearParameters();

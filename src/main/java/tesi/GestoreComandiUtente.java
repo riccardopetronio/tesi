@@ -1,19 +1,21 @@
 package tesi;
 
-import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
-import java.util.TreeMap;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class GestoreComandiUtente {
 	
-	private Scanner sc;
+	private final Scanner sc = new Scanner(System.in);;
 	
-	public GestoreComandiUtente() {
-		this.sc = new Scanner(System.in);
-	}
+	@Autowired // <--- Spring inietterà automaticamente il Service configurato
+	private UtenteService us;
+	@Autowired
+	private VirtualMachineService vms;
 
-
-	public void primaScelta() throws SQLException {
+	public void primaScelta() {
         System.out.print("Cosa vuoi fare?\n");        
 
 		String menu = "1) Login \n"
@@ -39,7 +41,7 @@ public class GestoreComandiUtente {
 	}
 	
 	
-	public void secondaScelta() throws SQLException {
+	public void secondaScelta() {
 		System.out.print("\nCosa vuoi fare?\n");        
 
 		String menu = "1) stampa tutte le VM presenti nel resource group \n"
@@ -54,8 +56,40 @@ public class GestoreComandiUtente {
         this.gestisciSecondaScelta(valoreIn);
 	}
 	
+	public void terzaScelta() {
+		System.out.print("\nCosa vuoi fare?\n");        
+
+		String menu = "1) crea nuova automazione \n"
+				+ "2) mostra automazioni abilitate \n"
+				+ "3) cancella automazione \n"
+				+ "4) modifica automazione esistente \n";
+
+        System.out.println(menu);        
+
+        System.out.print("Digita qui --> ");
+        String valoreIn = sc.nextLine();
+        
+        this.gestisciTerzaScelta(valoreIn);
+	}
 	
-	public void gestisciPrimaScelta(String s) throws SQLException {
+	
+	public void quartaScelta() {
+		System.out.print("\nCosa vuoi fare?\n");        
+
+		String menu = "1) modifica gli orari di una automazione già presente \n"
+				+ "2) abilita una automazione già presente \n"
+				+ "3) disabilita una automazione già presente \n";
+
+        System.out.println(menu);        
+
+        System.out.print("Digita qui --> ");
+        String valoreIn = sc.nextLine();
+        
+        this.gestisciQuartaScelta(valoreIn);
+	}
+	
+	
+	public void gestisciPrimaScelta(String s){
 		
 		if( s.equals("1") ) {
 			
@@ -65,13 +99,13 @@ public class GestoreComandiUtente {
 				return;
 			}
 		
-			Utente utente = UtenteService.verificaUsername(username);
+			Utente utente = this.us.verificaUsername(username);
 			if ( utente==null ) {
 				System.err.print("\nusername non presente nel DB, riprova\n\n");
 				this.primaScelta();
 				return;
 			}
-			System.out.print(" utente trovato\n");
+			System.out.print("utente trovato\n");
 
 			
 			String password = this.credenzialePassword();
@@ -80,7 +114,7 @@ public class GestoreComandiUtente {
 				return;
 			}
 			
-			if( UtenteService.logIn(password, utente.getHash(), utente.getSalt())==true ) {
+			if( this.us.logIn(password, utente.getHash(), utente.getSalt())==true ) {
 				System.out.print("\nlogin eseguito correttamente\n");
 				this.secondaScelta();
 			}
@@ -99,12 +133,12 @@ public class GestoreComandiUtente {
 				return;
 			}
 		
-			if ( UtenteService.verificaUsername(username)!=null ) {
+			if ( this.us.verificaUsername(username)!=null ) {
 				System.err.print("\nusername già presente nel DB, riprova\n\n");
 				this.primaScelta();
 				return;
 			}
-			System.out.print(" usename disponibile\n");
+			System.out.print("usename disponibile\n");
 
 			
 			String password = this.credenzialePassword();
@@ -113,7 +147,7 @@ public class GestoreComandiUtente {
 				return;
 			}
 			
-			if( UtenteService.registrazione(username, password)==true ) {
+			if( this.us.registrazione(username, password)==true ) {
 				System.out.print("Utente registrato correttamente\n\n");
 			}
 			else {
@@ -131,13 +165,13 @@ public class GestoreComandiUtente {
 	}
 	
 	
-	public void gestisciSecondaScelta(String s) throws SQLException {
+	public void gestisciSecondaScelta(String s) {
 		
 		if( s.equals("1") ) {
-			TreeMap<String, VMRecord> risultato = VirtualMachineService.getAllVMDalDB();
+			List<VMRecord> risultato = vms.getAllVMDalDB();
 			if( risultato!=null ) {
 		        System.out.print("\nRISULTATO:");
-				for (VMRecord vm : risultato.values()) {
+				for (VMRecord vm : risultato) {
 			        System.out.print("\n"+vm);
 				}
 		        System.out.print("\n");
@@ -151,8 +185,8 @@ public class GestoreComandiUtente {
 			}
 		}
 		else if( s.equals("2") ) {
-			VirtualMachineService.sincronizzaVM("tesi-petronio");
-	        System.out.print("\n\n operazione eseguita con successo");
+			this.vms.sincronizzaVM("tesi-petronio");
+	        System.out.print("\noperazione eseguita con successo, il DB è aggiornato\n");
 	        this.secondaScelta();
 	        return;
 		}
@@ -167,6 +201,14 @@ public class GestoreComandiUtente {
 		}
 	}
 	
+	
+	public void gestisciTerzaScelta(String s) {
+		
+	}
+	
+	public void gestisciQuartaScelta(String s) {
+		
+	}
 
 	public boolean verificaInput(String s) {
 		if( s.stripLeading().split(" ").length!=1 ) {

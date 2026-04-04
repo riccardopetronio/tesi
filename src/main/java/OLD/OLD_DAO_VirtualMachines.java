@@ -1,4 +1,4 @@
-package tesi;
+package OLD;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,7 +9,9 @@ import java.util.TreeMap;
 
 import com.azure.resourcemanager.compute.models.VirtualMachine;
 
-public class DAO_VirtualMachines {
+import tesi.VMRecord;
+
+public class OLD_DAO_VirtualMachines {
 	
 	
 	
@@ -17,7 +19,7 @@ public class DAO_VirtualMachines {
 		
 	    System.out.println("Inizio operazione di INSERT...");
 
-		Connection conn = DatabaseConnector.creaConnessione();
+		Connection conn = OLD_DatabaseConnector.creaConnessione();
 		PreparedStatement ps = conn.prepareStatement("INSERT INTO virtual_machines(ID, nome, sistema_operativo, stato) VALUES(?, ?, ?, ?)");
 		
 		ps.setString(1, vm.vmId());
@@ -38,7 +40,7 @@ public class DAO_VirtualMachines {
 		
 		System.out.println("Inizio operazione di SELECT...");
 
-		Connection conn = DatabaseConnector.creaConnessione();
+		Connection conn = OLD_DatabaseConnector.creaConnessione();
 		Statement st = conn.createStatement();
 		
 		String query = "SELECT * FROM virtual_machines";
@@ -64,7 +66,7 @@ public class DAO_VirtualMachines {
 	public static void aggiornaVM(VMRecord vm) throws SQLException {
 	    String sql = "UPDATE virtual_machines SET nome = ?, sistema_operativo = ?, stato = ? WHERE ID = ?";
 
-	    try (Connection conn = DatabaseConnector.creaConnessione();
+	    try (Connection conn = OLD_DatabaseConnector.creaConnessione();
 	         PreparedStatement ps = conn.prepareStatement(sql)) {
 
 	        ps.setString(1, vm.getNome());
@@ -79,7 +81,7 @@ public class DAO_VirtualMachines {
 	public static void eliminaVM(String id) throws SQLException {
 	    String sql = "DELETE FROM virtual_machines WHERE ID = ?";
 
-	    try (Connection conn = DatabaseConnector.creaConnessione();
+	    try (Connection conn = OLD_DatabaseConnector.creaConnessione();
 	         PreparedStatement ps = conn.prepareStatement(sql)) {
 
 	        ps.setString(1, id);

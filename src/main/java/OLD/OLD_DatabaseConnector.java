@@ -1,10 +1,10 @@
-package tesi;
+package OLD;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import io.github.cdimascio.dotenv.Dotenv;
 
-public class DatabaseConnector {
+public class OLD_DatabaseConnector {
 	
 	public static Connection creaConnessione() {
 		

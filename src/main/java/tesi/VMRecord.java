@@ -1,13 +1,32 @@
 package tesi;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "virtual_machines")
 public class VMRecord {
-	
+
+	@Id
+    @Column(name = "ID", length = 36)
 	private String id;
+	
+    @Column(name = "nome", nullable = false)
 	private String nome;
+    
+    @Column(name = "sistema_operativo", nullable = false)
 	private String os;
+    
+    @Column(name = "stato", nullable = false)
 	private String stato;
 	
-	
+    
+    
+	public VMRecord() {
+	}
+
 	public VMRecord(String id, String nome, String os, String stato) {
 		this.id = id;
 		this.nome = nome;
@@ -51,5 +70,9 @@ public class VMRecord {
 	@Override
 	public String toString() {
 		return "VM: [id=" + id + ", nome=" + nome + ", os=" + os + ", stato=" + stato + "]";
+	}
+	
+	public boolean equals(VMRecord vm) {
+		return this.getId().equals(vm.getId());
 	}
 }
