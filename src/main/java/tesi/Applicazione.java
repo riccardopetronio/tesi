@@ -20,6 +20,7 @@ public class Applicazione {
     }
 
     @Bean
+    
     public CommandLineRunner commandLineRunner(GestoreComandiUtente comandi) {
         return args -> {
             // Questo codice viene eseguito DOPO che Spring ha preparato tutto
