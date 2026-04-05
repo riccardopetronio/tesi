@@ -1,4 +1,4 @@
-package tesi;
+package tesi.vm;
 
 import java.util.LinkedList;
 import java.util.List;

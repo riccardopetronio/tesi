@@ -1,4 +1,4 @@
-package tesi;
+package tesi.vm;
 
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.management.AzureEnvironment;

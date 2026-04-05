@@ -1,4 +1,4 @@
-package tesi;
+package tesi.vm;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

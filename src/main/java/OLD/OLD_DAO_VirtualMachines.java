@@ -9,7 +9,7 @@ import java.util.TreeMap;
 
 import com.azure.resourcemanager.compute.models.VirtualMachine;
 
-import tesi.VMRecord;
+import tesi.vm.VMRecord;
 
 public class OLD_DAO_VirtualMachines {
 	

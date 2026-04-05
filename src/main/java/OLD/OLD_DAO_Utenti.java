@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import tesi.Utente;
+import tesi.user.Utente;
 
 public class OLD_DAO_Utenti {
 	

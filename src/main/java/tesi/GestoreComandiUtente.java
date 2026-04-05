@@ -4,6 +4,12 @@ import java.util.List;
 import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import tesi.automation.AutomazioneService;
+import tesi.automation.TipologiaOperazione;
+import tesi.user.Utente;
+import tesi.user.UtenteService;
+import tesi.vm.VMRecord;
+import tesi.vm.VirtualMachineService;
 
 @Component
 public class GestoreComandiUtente {
@@ -14,6 +20,10 @@ public class GestoreComandiUtente {
 	private UtenteService us;
 	@Autowired
 	private VirtualMachineService vms;
+	@Autowired
+	private AutomazioneService as;
+	
+	private Utente utenteAttuale;
 
 	public void primaScelta() {
         System.out.print("Cosa vuoi fare?\n");        
@@ -46,7 +56,8 @@ public class GestoreComandiUtente {
 
 		String menu = "1) stampa tutte le VM presenti nel resource group \n"
 					+ "2) aggiorna la lista di VM sul DB \n"
-					+ "3) logout \n";
+					+ "3) gestisci le automazioni \n"
+					+ "4) logout \n";
 
         System.out.println(menu);        
 
@@ -60,9 +71,10 @@ public class GestoreComandiUtente {
 		System.out.print("\nCosa vuoi fare?\n");        
 
 		String menu = "1) crea nuova automazione \n"
-				+ "2) mostra automazioni abilitate \n"
-				+ "3) cancella automazione \n"
-				+ "4) modifica automazione esistente \n";
+				+ "2) mostra tutte le automazioni salvate nel DB \n"
+				+ "3) mostra automazioni abilitate \\n"
+				+ "4) elimina automazione \n"
+				+ "5) modifica automazione esistente \n";
 
         System.out.println(menu);        
 
@@ -73,19 +85,8 @@ public class GestoreComandiUtente {
 	}
 	
 	
-	public void quartaScelta() {
-		System.out.print("\nCosa vuoi fare?\n");        
-
-		String menu = "1) modifica gli orari di una automazione già presente \n"
-				+ "2) abilita una automazione già presente \n"
-				+ "3) disabilita una automazione già presente \n";
-
-        System.out.println(menu);        
-
-        System.out.print("Digita qui --> ");
-        String valoreIn = sc.nextLine();
-        
-        this.gestisciQuartaScelta(valoreIn);
+	public void terzaSceltaOpzioneQuattro() {
+		System.out.print("\nQuale vuoi elimenare?\n");                
 	}
 	
 	
@@ -106,7 +107,6 @@ public class GestoreComandiUtente {
 				return;
 			}
 			System.out.print("utente trovato\n");
-
 			
 			String password = this.credenzialePassword();
 			if ( verificaInput(password)==false ){
@@ -116,6 +116,7 @@ public class GestoreComandiUtente {
 			
 			if( this.us.logIn(password, utente.getHash(), utente.getSalt())==true ) {
 				System.out.print("\nlogin eseguito correttamente\n");
+				this.setUtenteAttuale(utente);
 				this.secondaScelta();
 			}
 			else {
@@ -169,21 +170,16 @@ public class GestoreComandiUtente {
 		
 		if( s.equals("1") ) {
 			List<VMRecord> risultato = vms.getAllVMDalDB();
-			if( risultato!=null ) {
-		        System.out.print("\nRISULTATO:");
-				for (VMRecord vm : risultato) {
-			        System.out.print("\n"+vm);
-				}
-		        System.out.print("\n");
-				this.secondaScelta();
-				return;
+			
+		    System.out.print("\nRISULTATO:");
+			for (VMRecord vm : risultato) {
+		        System.out.print("\n"+vm);
 			}
-			else {
-				System.err.print("\noperazione fallita riprova\n"); 
-				this.secondaScelta();
-				return;
-			}
+			System.out.print("\n");
+			this.secondaScelta();
+			return;
 		}
+		
 		else if( s.equals("2") ) {
 			this.vms.sincronizzaVM("tesi-petronio");
 	        System.out.print("\noperazione eseguita con successo, il DB è aggiornato\n");
@@ -191,7 +187,7 @@ public class GestoreComandiUtente {
 	        return;
 		}
 		else if( s.equals("3") ) {
-			this.primaScelta();
+			this.terzaScelta();;
 			return;
 		}
 		else {
@@ -204,12 +200,85 @@ public class GestoreComandiUtente {
 	
 	public void gestisciTerzaScelta(String s) {
 		
+		if( s.equals("1") ) {
+			this.gestisciCreazioneAutomazione();
+		}
+		
+		else if( s.equals("2") ) {
+			
+		}
+		
+		else if( s.equals("3") ) {
+			
+		}
+		
+		else if( s.equals("4") ) {
+			
+		}
+		
+		else if( s.equals("5") ) {
+			
+		}
+		
+		else {
+			System.err.print("\ncomando non disponibile riprova \n");
+			this.terzaScelta();
+			return;}
 	}
 	
-	public void gestisciQuartaScelta(String s) {
+	
+	public void gestisciCreazioneAutomazione() {
+		System.out.print("\nper quale vm? \n");
 		
+		List<VMRecord> listaVM = this.vms.getAllVMDalDB();
+		int n = 0;
+		for ( VMRecord vTemp: listaVM ){
+			System.out.print(""+n+")"+" "+vTemp+"\n");
+			n++;
+		}
+		
+		System.out.print("\ndigita qui la scelta --> ");
+        String numVM = sc.nextLine();
+        VMRecord vm = listaVM.get( Integer.parseInt(numVM) );
+        
+       
+        System.out.print("\n(1)accensione (2)spegnimento | quale scegli? --> ");
+        String tipologiaIn = sc.nextLine();
+        TipologiaOperazione tipologiaOut;
+        
+        if( tipologiaIn.equals("1") ) {
+        	tipologiaOut = TipologiaOperazione.ACCENSIONE;
+        }
+        else {
+        	tipologiaOut = TipologiaOperazione.SPEGNIMENTO;
+        }
+        
+		System.out.print("\na che ora? --> ");
+        String orario = sc.nextLine();
+		
+		System.out.print("\n(1)abilitata (2)disabilitata | quale scegli? --> ");
+        String abilitazioneIn = sc.nextLine();
+        boolean abilitazioneOut;
+        
+        if( abilitazioneIn.equals("1") ) {
+        	abilitazioneOut = true;
+        }
+        else {
+        	abilitazioneOut = false;
+        }
+
+        this.as.aggiungiAutomazione(this.getUtenteAttuale(), vm, tipologiaOut, orario, abilitazioneOut);
 	}
 
+	
+	
+	
+	public Utente getUtenteAttuale() {
+		return utenteAttuale;
+	}
+	public void setUtenteAttuale(Utente utenteAttuale) {
+		this.utenteAttuale = utenteAttuale;
+	}
 	public boolean verificaInput(String s) {
 		if( s.stripLeading().split(" ").length!=1 ) {
 			System.err.print("\nerrore riprova, la stringa non può contenere spazi\n\n");

@@ -20,7 +20,6 @@ public class Applicazione {
     }
 
     @Bean
-    
     public CommandLineRunner commandLineRunner(GestoreComandiUtente comandi) {
         return args -> {
             // Questo codice viene eseguito DOPO che Spring ha preparato tutto
@@ -31,7 +30,7 @@ public class Applicazione {
             // Se vuoi scommentare la riga di Azure, dovrai iniettare anche VirtualMachineService
             // VirtualMachineService.salvaVirMacDaAzureAlDB("tesi-petronio");
             
-            comandi.primaScelta();
+            //comandi.primaScelta();
         };
     }
 }
