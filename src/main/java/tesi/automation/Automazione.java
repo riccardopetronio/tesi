@@ -97,4 +97,11 @@ public class Automazione {
 		this.abilitata = abilitata;
 	}
 
+	@Override
+	public String toString() {
+		return "Automazione [id_automazione= " + id_automazione + ", utente= " + utente.getUsername() + ", vm= " + vm.getNome()
+				+ ", tipologiaOperazione= " + tipologiaOperazione + ", orario= " + orario + ", abilitata= " + abilitata
+				+ "]";
+	}
+
 }

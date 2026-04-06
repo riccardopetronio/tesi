@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 
-@Component
+//@Component
 public class testQarz implements CommandLineRunner {
 
     @Autowired
@@ -23,10 +23,10 @@ public class testQarz implements CommandLineRunner {
                     .withIdentity("testJobRapido", "gruppoTest")
                     .build();
 
-            // 2.definisco il Trigger per scattare tra 5 secondi
+            // 2.definisco il Trigger per scattare tra 10 secondi
             Trigger trigger = TriggerBuilder.newTrigger()
                     .withIdentity("testTriggerRapido", "gruppoTest")
-                    .startAt(DateBuilder.futureDate(5, DateBuilder.IntervalUnit.SECOND))
+                    .startAt(DateBuilder.futureDate(10, DateBuilder.IntervalUnit.SECOND))
                     .build();
 
      
