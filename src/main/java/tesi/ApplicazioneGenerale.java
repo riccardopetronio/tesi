@@ -9,10 +9,10 @@ import tesi.vm.VirtualMachineService;
 
 
 @SpringBootApplication // Questo "accende" Spring, Hibernate e la scansione dei pacchetti
-public class Applicazione {
+public class ApplicazioneGenerale {
 	
-	// finale serve a specificare che l'oggetto logger non può essere sostituito o modificato mentre il programma è in eseguzione
-	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(Applicazione.class);
+	// final serve a specificare che l'oggetto logger non può essere sostituito o modificato mentre il programma è in eseguzione
+	private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(ApplicazioneGenerale.class);
 
     public static void main(String[] args) {
     	/* carica .env e lo rende disponibile a Spring
@@ -21,7 +21,7 @@ public class Applicazione {
     	*/
     	
     	// Avvia il contesto di Spring
-        SpringApplication.run(Applicazione.class, args);
+        SpringApplication.run(ApplicazioneGenerale.class, args);
     }
 
     @Bean

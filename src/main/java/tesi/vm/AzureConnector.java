@@ -1,5 +1,8 @@
 package tesi.vm;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
 import com.azure.core.credential.TokenCredential;
 import com.azure.core.management.AzureEnvironment;
 import com.azure.core.management.profile.AzureProfile;
@@ -7,9 +10,11 @@ import com.azure.identity.ClientSecretCredentialBuilder;
 import com.azure.resourcemanager.AzureResourceManager;
 import io.github.cdimascio.dotenv.Dotenv;
 
+@Component
 public class AzureConnector {
 	
-	public static AzureResourceManager getManager() {
+	@Bean
+	public AzureResourceManager getManager() {
 		
 		
 	    System.out.println("Inizio la connessione a azure...");

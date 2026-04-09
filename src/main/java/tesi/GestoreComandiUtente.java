@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Scanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import tesi.automation.Automazione;
 import tesi.automation.AutomazioneService;
 import tesi.automation.TipologiaOperazione;
@@ -17,7 +16,7 @@ import tesi.vm.VirtualMachineService;
 public class GestoreComandiUtente {
 	
 	private Utente utenteAttuale;
-	private final Scanner sc = new Scanner(System.in);;
+	private final Scanner sc = new Scanner(System.in);
 	
 	@Autowired // <--- Spring inietterà automaticamente il Service configurato
 	private UtenteService us;
@@ -25,7 +24,6 @@ public class GestoreComandiUtente {
 	private VirtualMachineService vms;
 	@Autowired
 	private AutomazioneService as;
-	
 	
 
 	public void primaScelta() {
@@ -89,7 +87,7 @@ public class GestoreComandiUtente {
 	
 
 	
-	public void gestisciPrimaScelta(String s){
+	public void gestisciPrimaScelta(String s) {
 		
 		if( s.equals("1") ) {
 			
@@ -212,7 +210,7 @@ public class GestoreComandiUtente {
 		}
 		
 		else if( s.equals("2") ) {
-			List<Automazione> listaAutomazioni = this.as.gatAllAuomations();
+			List<Automazione> listaAutomazioni = this.as.getAllAuotomations();
 			for( Automazione vTemp: listaAutomazioni ) {
 		        System.out.print("\n"+vTemp);
 			}
@@ -255,6 +253,7 @@ public class GestoreComandiUtente {
 			this.terzaScelta();
 			return;}
 	}
+	
 	
 	
 	public void gestisciCreazioneAutomazione() {
@@ -301,7 +300,7 @@ public class GestoreComandiUtente {
 
 	public void gestisciModificaAutomazione() {
 		
-		for( Automazione vTemp: this.as.gatAllAuomations() ) {
+		for( Automazione vTemp: this.as.getAllAuotomations() ) {
 	        System.out.print("\n"+vTemp);
 		}
         System.out.print("\n");
@@ -334,6 +333,7 @@ public class GestoreComandiUtente {
     		return;
         }
 	}
+	
 	
 	
 	public Utente getUtenteAttuale() {

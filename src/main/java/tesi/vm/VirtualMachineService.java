@@ -14,13 +14,14 @@ public class VirtualMachineService {
 	
 	@Autowired // Spring "inserisce" qui il repository automaticamente
 	private VMRepository VMRepository;
-	 
+	@Autowired
+	private AzureService as;
+	
 	public void salvaVirMacDaAzureAlDB(String resourceGroupName) {
 
 	    System.out.println("Inizio sincronizazione a Azure...");
 
-	    AzureResourceManager manager = AzureConnector.getManager();	    
-	    for (VirtualMachine vmAzure : manager.virtualMachines().listByResourceGroup(resourceGroupName)) {
+	    for (VirtualMachine vmAzure : this.as.getListAzureVM(resourceGroupName)) {
 
 	        System.out.println("Salvataggio VM: " + vmAzure.name());
 	        VMRecord vTemp = new VMRecord(vmAzure.vmId(), vmAzure.computerName(), vmAzure.osType().toString(), vmAzure.powerState().toString());
@@ -34,15 +35,17 @@ public class VirtualMachineService {
 		return this.VMRepository.findAll();
 	}
 	
+	public void salvaVirtualMachineSulDB(VMRecord vm) {
+		this.VMRepository.save(vm);
+	}
 	
 	public void sincronizzaVM(String resourceGroupName) {
 
         // lista per tenere traccia delle VM viste su Azure, serve dopo per capire quali eliminare dal DB
         LinkedList<String> idVisti = new LinkedList<String>();
 
-        AzureResourceManager manager = AzureConnector.getManager();
         // Ciclo su tutte le VM presenti nel resource group su Azure
-        for (VirtualMachine vmAzure : manager.virtualMachines().listByResourceGroup(resourceGroupName)) {
+        for (VirtualMachine vmAzure : this.as.getListAzureVM(resourceGroupName)) {
 
             String id = vmAzure.vmId();
             idVisti.add(id); // segno che questa VM esiste su Azure
@@ -59,4 +62,9 @@ public class VirtualMachineService {
             }
         }
     }
+	
+	
+	public void applicaAutomazioneSuAzure(String resourceGroupName) {
+		
+	}
 }
