@@ -1,6 +1,7 @@
 package tesi.vm;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import com.azure.core.http.rest.PagedIterable;
@@ -11,6 +12,7 @@ import com.azure.resourcemanager.compute.models.VirtualMachine;
 public class AzureService {
 
 	@Autowired
+	@Lazy
     private AzureResourceManager manager;  // spring si occupa di creare e gestire il manager, non devo rifarlo per ogni metodo
 	
 

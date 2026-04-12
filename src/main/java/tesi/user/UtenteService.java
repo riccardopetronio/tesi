@@ -6,12 +6,11 @@ import org.springframework.stereotype.Service;
 @Service // Dice a Spring che questa è una classe di logica
 public class UtenteService {
 
-    @Autowired // Spring "inserisce" qui il repository automaticamente
+    @Autowired // Spring "inserisce" qui il repository
     private UtenteRepository utenteRepository;
 
     // Metodo per verificare se l'utente esiste
     public Utente verificaUsername(String u) {
-        // findById ritorna un Utente presente nel DB. Se non trova nulla, restituisce null.
         return utenteRepository.findById(u).orElse(null);
     }
 

@@ -2,11 +2,9 @@ package tesi.vm;
 
 import java.util.LinkedList;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.compute.models.VirtualMachine;
 
 @Service 
@@ -15,6 +13,7 @@ public class VirtualMachineService {
 	@Autowired // Spring "inserisce" qui il repository automaticamente
 	private VMRepository VMRepository;
 	@Autowired
+	@Lazy
 	private AzureService as;
 	
 	public void salvaVirMacDaAzureAlDB(String resourceGroupName) {
@@ -62,9 +61,4 @@ public class VirtualMachineService {
             }
         }
     }
-	
-	
-	public void applicaAutomazioneSuAzure(String resourceGroupName) {
-		
-	}
 }

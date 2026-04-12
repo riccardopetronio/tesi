@@ -22,17 +22,19 @@ public class QuartzService {
         
     	// Dico a Quartz quale classe deve eseguire e gli passo l'ID dell'automazione da memorizzare nelle sue tabelle.
     	JobDetail jobDetail = JobBuilder.newJob(EsecuzioneAutomazioneJob.class)
-                .withIdentity("Automazione_" + automazione.getId_automazione(), "GruppoVM")  // crea una chiave primaria per il Job all'interno di Quartz, associandoli una categoria "GruppoVM" per avere un raggruppamento
-                .usingJobData("id_automazione", automazione.getId_automazione()) // IL COLLEGAMENTO: trasferisce in quartz l'automazione
-                .build();
+    		// crea una chiave primaria per il Job all'interno di Quartz, associandoli una categoria "GruppoVM" per un raggruppamento
+    		.withIdentity("Automazione_" + automazione.getId_automazione(), "GruppoVM")  
+            .usingJobData("id_automazione", automazione.getId_automazione()) // trasferisce in quartz l'automazione
+            .build();
 
         // Definisco IL QUANDO farlo (Uso l'orario salvato nella tua tabella) (DEFINIZIONE DEL TRIGGER)
         CronTrigger trigger = TriggerBuilder.newTrigger()
-             .withIdentity("Trigger_" + automazione.getId_automazione(), "GruppoVM") // Anche l'orario di esecuzione ha un suo identificativo per la specifica automazione
-             .withSchedule( CronScheduleBuilder.cronSchedule(automazione.getOrario()) ) // trasferisce in quartz l'orario di eseguzione
-             .build();
+        	// Anche l'orario di esecuzione ha un suo identificativo per la specifica automazione
+             .withIdentity("Trigger_" + automazione.getId_automazione(), "GruppoVM") 
+             .withSchedule( CronScheduleBuilder.cronSchedule(automazione.getOrario()) ) 
+             .build();					// trasferisce in quartz l'orario di eseguzione
         
-        // Se esiste già un trigger con lo stesso nome lo sostituiamo, altrimenti ne creiamo uno nuovo.
+        // Se esiste già un trigger con lo stesso nome lo sostituiamo, altrimenti ne creo uno nuovo.
         if ( scheduler.checkExists(jobDetail.getKey()) ) {
             scheduler.deleteJob(jobDetail.getKey());
         }
@@ -43,7 +45,7 @@ public class QuartzService {
     public void eliminaAutomazioneDaQuartz(Integer idAutomazione) {
         try {
             // Ricostruisco la "Targa" esatta del Job
-            JobKey chiaveJob = JobKey.jobKey("Job_" + idAutomazione, "GruppoVM");
+            JobKey chiaveJob = JobKey.jobKey("Automazione_" + idAutomazione, "GruppoVM");
             
             // Se esiste in Quartz, lo elimino
             if (scheduler.checkExists(chiaveJob)) {

@@ -24,7 +24,6 @@ public class GestoreComandiUtente {
 	private VirtualMachineService vms;
 	@Autowired
 	private AutomazioneService as;
-	
 
 	public void primaScelta() {
         System.out.print("Cosa vuoi fare?\n");        

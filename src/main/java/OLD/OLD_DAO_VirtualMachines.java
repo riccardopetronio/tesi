@@ -13,23 +13,23 @@ import tesi.vm.VMRecord;
 
 public class OLD_DAO_VirtualMachines {
 	
-	
-	
 	public static void aggiungiVM(VirtualMachine vm) throws SQLException {
 		
 	    System.out.println("Inizio operazione di INSERT...");
 
 		Connection conn = OLD_DatabaseConnector.creaConnessione();
-		PreparedStatement ps = conn.prepareStatement("INSERT INTO virtual_machines(ID, nome, sistema_operativo, stato) VALUES(?, ?, ?, ?)");
+		PreparedStatement ps = conn.prepareStatement("INSERT INTO "
+				+ "virtual_machines(ID, nome, sistema_operativo, stato) "
+				+ "VALUES(?, ?, ?, ?)");
 		
 		ps.setString(1, vm.vmId());
 	    ps.setString(2, vm.name());
 	    ps.setString(3, vm.osType().toString());
 	    ps.setString(4, vm.powerState().toString());
 	    
-	    ps.executeUpdate();   // qui è dove le modifiche alla tabella sono effettivamente eseguite
-	    ps.clearParameters(); // questo metodo serve a eliminare i parametri che della VM che è gia stata registrata per far spazio ai
-		  					  // prossimi, non e fonfamentale, ma è per assicurare che non ci siano errori
+	    ps.executeUpdate();  // le modifiche alla tabella sono eseguite qui.
+	    ps.clearParameters();// Per ripulirei i parametri  della VM gia  
+		  				     // registrata per evitare eventuali errori
 	    ps.close();
 	    conn.close();
 	    

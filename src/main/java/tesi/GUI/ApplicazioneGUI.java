@@ -6,7 +6,7 @@ public class ApplicazioneGUI {
 
 		
 		View f = new View();
-		f.creazioneView();
+		f.primaFinestra();
 		
 	}
 }
