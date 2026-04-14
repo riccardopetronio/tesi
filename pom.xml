@@ -3,8 +3,21 @@
   <groupId>tesi</groupId>
   <artifactId>tesi</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <properties>
+    <javafx.version>21</javafx.version>
+  </properties>
+  
   <build>
     <plugins>
+	    <plugin>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-maven-plugin</artifactId>
+		    <version>0.0.8</version>
+		    <configuration>
+		        <mainClass>tesi.GUI.ApplicazioneGUI</mainClass>
+		    </configuration>
+		</plugin>
+		
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.13.0</version>
@@ -12,6 +25,7 @@
           <release>21</release>
         </configuration>
       </plugin>
+      
     </plugins>
   </build>
   
@@ -59,6 +73,18 @@
     	<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-quartz</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-controls</artifactId>
+		    <version>${javafx.version}</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-fxml</artifactId>
+		    <version>${javafx.version}</version>
 		</dependency>
 	  </dependencies>
   </project>

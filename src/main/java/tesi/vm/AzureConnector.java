@@ -1,6 +1,7 @@
 package tesi.vm;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import com.azure.core.credential.TokenCredential;
@@ -14,6 +15,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 public class AzureConnector {
 	
 	@Bean
+	@Lazy
 	public AzureResourceManager getManager() {
 		
 		

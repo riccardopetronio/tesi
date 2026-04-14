@@ -36,10 +36,10 @@ public class AutomazioneService {
             
             if ( auto.getTipologiaOperazione() == TipologiaOperazione.ACCENSIONE) {
                 vm.setStato("accesa"); 
-                //this.as.accendiVirtualMachineSuAzure("tesi-petronio", vm.getNome());
+                this.as.accendiVirtualMachineSuAzure("tesi-petronio", vm.getNome());
             } else {
                 vm.setStato("spenta");
-                //this.as.spegliVirtualMachineSuAzure("tesi-petronio", vm.getNome());
+                this.as.spegliVirtualMachineSuAzure("tesi-petronio", vm.getNome());
             }
             this.vms.salvaVirtualMachineSulDB(vm);
         }

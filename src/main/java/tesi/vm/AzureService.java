@@ -9,10 +9,10 @@ import com.azure.resourcemanager.AzureResourceManager;
 import com.azure.resourcemanager.compute.models.VirtualMachine;
 
 @Service
+@Lazy
 public class AzureService {
 
 	@Autowired
-	@Lazy
     private AzureResourceManager manager;  // spring si occupa di creare e gestire il manager, non devo rifarlo per ogni metodo
 	
 
