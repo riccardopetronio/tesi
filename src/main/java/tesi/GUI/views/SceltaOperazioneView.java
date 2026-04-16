@@ -4,75 +4,73 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-
 import jakarta.annotation.PostConstruct;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import tesi.GUI.controllers.InserimentoPasswordController;
+import tesi.GUI.controllers.SceltaOperazioneController;
 
 @Component @Profile("gui") @Lazy
-public class InserimentoPasswordView {
+public class SceltaOperazioneView {
 	
 	private VBox layout;
 	private Label titolo;
 	private HBox rigaInput;
-	private TextField txtPassword;
+	private ComboBox<String> cbScelta;
 	private Button btnAvanti;
 	private Button btnIndietro;
 	private ListView<String> listaLog;
 	
 	@Autowired @Lazy
-    private InserimentoPasswordController controller; 
-	
+    private SceltaOperazioneController controller;
 
-	public InserimentoPasswordView() {
+	public SceltaOperazioneView() {
         this.layout = new VBox(20);
-        this.titolo = new Label("Inserimento password");
+        this.titolo = new Label();
         this.rigaInput = new HBox(15);
-        this.txtPassword = new TextField();
+        this.cbScelta = new ComboBox<>();
         this.btnAvanti = new Button("AVANTI");
         this.btnIndietro = new Button("INDIETRO");
         this.listaLog = new ListView<>();
 	}
 
-
 	@PostConstruct  
     public void init() {
 		this.layout.setAlignment(Pos.TOP_CENTER);
-        this.titolo.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+		this.titolo.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
         this.rigaInput.setAlignment(Pos.CENTER);
         
-        this.txtPassword.setPromptText("Inserisci qui la password");
-        this.txtPassword.setMaxWidth(150);
-        
-        this.btnIndietro.setOnAction(e -> {
-        	this.controller.indietro();
-        });
+        this.cbScelta.getItems().addAll("MOSTRA LE AUTOMAZIONI ESISTENTI", "MOSTRA LE AUTOMAZIONI ATTIVE", "CREA NUOVA AUTOMAZIONE", 
+        		"ELIMINA AUTOMAZIONE", "MODIFICA AUTOMAZIONE");
         
         this.btnAvanti.setOnAction(e -> {
-            this.controller.gestisciInserimentoPassword(this.txtPassword.getText());
+            this.controller.gestisciScelta(this.cbScelta.getValue());
         });
-                
+        
+        this.btnIndietro.setOnAction(e -> {
+            this.controller.indietro();
+        });
+        
         this.rigaInput.getChildren().addAll(this.btnIndietro, this.btnAvanti);
-        this.layout.getChildren().addAll(this.titolo,this.txtPassword, this.rigaInput, this.listaLog);
+        
+        this.layout.getChildren().addAll(this.titolo, this.cbScelta, this.rigaInput, this.listaLog);
 	}
-	
+
 	public Parent asParent() {
         return this.layout;
     }
 	
-	public void reSetPassword() {
-        this.txtPassword.clear();;
+	public void preparaView(String titolo) {
+        this.titolo.setText(titolo);
+        this.cbScelta.getSelectionModel().clearSelection();
     }
-
-    public void addLog(String s) {
+	
+	public void addLog(String s) {
         this.listaLog.getItems().add(s);
-        }
-
+    }
 }

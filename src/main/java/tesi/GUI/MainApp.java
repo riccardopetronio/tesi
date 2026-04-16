@@ -22,7 +22,7 @@ public class MainApp extends Application {
         // Inizializza il navigatore e mostra la prima videata
     	Navigatore.setContext(context);
     	Navigatore.setStage(primaryStage);
-    	Navigatore.mostraLogin(); 
+    	Navigatore.mostraAutenticazione(); 
     }
 
     @Override
