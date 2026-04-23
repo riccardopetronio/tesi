@@ -22,8 +22,8 @@ public class AutomazioneService {
     private VirtualMachineService vms;
 	@Autowired
 	private QuartzService qs;
-	@Autowired
-	@Lazy
+	
+	@Autowired @Lazy
 	private AzureService as;
 	
     @Transactional // esegue tutto o niente se avviene qualche errore
@@ -51,7 +51,7 @@ public class AutomazioneService {
 		Automazione vTemp = new Automazione(u, vm, to, orario, abilitata);
 		this.ar.save(vTemp);
 		try {
-			this.qs.programmaAutomazione(vTemp);
+			this.qs.sincronizzaAutomazione(vTemp);
 		}
 		catch (Exception e) {
         	System.err.print("\n\nerrore nella programmazione della automazione  "+vTemp + e);
@@ -60,6 +60,10 @@ public class AutomazioneService {
 	
 	public List<Automazione> getAllAuotomations() {
 		return this.ar.findAll();
+	}
+
+	public Automazione getAutomazione(int id) {
+		return this.ar.findById(id).orElse(null);
 	}
 
 	public List<Automazione> getAutomazioniAbilitate(){
@@ -77,7 +81,7 @@ public class AutomazioneService {
 		vTemp.setOrario(orario);
 		this.ar.save(vTemp);
 		try {
-			this.qs.programmaAutomazione(vTemp);
+			this.qs.sincronizzaAutomazione(vTemp);
 		} catch (SchedulerException e) {
         	System.err.print("\n\nerrore nella programmazione della automazione  "+vTemp + e);
 		}
@@ -89,7 +93,7 @@ public class AutomazioneService {
 		vTemp.setAbilitata(abilitazione);;
 		this.ar.save(vTemp);
 		try {
-			this.qs.programmaAutomazione(vTemp);
+			this.qs.sincronizzaAutomazione(vTemp);
 		} catch (SchedulerException e) {
         	System.err.print("\n\nerrore nella programmazione della automazione  "+vTemp + e);
 		}
@@ -102,9 +106,23 @@ public class AutomazioneService {
 		vTemp.setAbilitata(abilitazione);;
 		this.ar.save(vTemp);
 		try {
-			this.qs.programmaAutomazione(vTemp);
+			this.qs.sincronizzaAutomazione(vTemp);
 		} catch (SchedulerException e) {
         	System.err.print("\n\nerrore nella programmazione della automazione  "+vTemp + e);
+		}
+	}
+	
+	public void modificaAutomazione(int id, TipologiaOperazione tipologiaOperazione, String orario, boolean abilitazione) {
+		Automazione vTemp = this.ar.findById(id).orElse(null);
+		//do per scontato che esista
+		vTemp.setTipologiaOperazione(tipologiaOperazione);
+		vTemp.setOrario(orario);
+		vTemp.setAbilitata(abilitazione);
+		this.ar.save(vTemp);
+		try {
+			this.qs.sincronizzaAutomazione(vTemp);
+		} catch (SchedulerException e) {
+			System.err.print("\n\nerrore nella programmazione della automazione  " + vTemp + e);
 		}
 	}
 	

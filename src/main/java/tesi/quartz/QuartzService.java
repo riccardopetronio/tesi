@@ -1,5 +1,7 @@
 package tesi.quartz;
 
+import java.util.Set;
+
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.JobBuilder;
@@ -8,6 +10,7 @@ import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerBuilder;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tesi.automation.Automazione;
@@ -41,6 +44,14 @@ public class QuartzService {
         // Consegno tutto a Quartz
         scheduler.scheduleJob(jobDetail, trigger);
     }
+
+    public void sincronizzaAutomazione(Automazione automazione) throws SchedulerException {
+        if (automazione.isAbilitata()) {
+            programmaAutomazione(automazione);
+            return;
+        }
+        eliminaAutomazioneDaQuartz(automazione.getId_automazione());
+    }
     
     public void eliminaAutomazioneDaQuartz(Integer idAutomazione) {
         try {
@@ -54,6 +65,29 @@ public class QuartzService {
             }
         } catch (SchedulerException e) {
             System.err.println("[ERRORE QUARTZ] Impossibile eliminare il job " + idAutomazione + e);
+        }
+    }
+
+    public void eliminaJobOrfani(Set<Integer> idAutomazioniValide) throws SchedulerException {
+        for (JobKey jobKey : scheduler.getJobKeys(GroupMatcher.jobGroupEquals("GruppoVM"))) {
+            Integer idAutomazione = estraiIdAutomazione(jobKey);
+            if (idAutomazione == null || !idAutomazioniValide.contains(idAutomazione)) {
+                scheduler.deleteJob(jobKey);
+            }
+        }
+    }
+
+    private Integer estraiIdAutomazione(JobKey jobKey) {
+        String nomeJob = jobKey.getName();
+        if (!nomeJob.startsWith("Automazione_")) {
+            return null;
+        }
+
+        String id = nomeJob.substring("Automazione_".length());
+        try {
+            return Integer.valueOf(id);
+        } catch (NumberFormatException e) {
+            return null;
         }
     }
 }

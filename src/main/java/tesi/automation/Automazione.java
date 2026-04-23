@@ -103,5 +103,10 @@ public class Automazione {
 				+ ", tipologiaOperazione= " + tipologiaOperazione + ", orario= " + orario + ", abilitata= " + abilitata
 				+ "]";
 	}
+	
+	public String stampa() {
+		return "Automazione " + id_automazione + " su " + vm.getNome() + " alle " + orario +
+				"  (" + tipologiaOperazione +", ABILITATA: " + abilitata + ")";
+	}
 
 }

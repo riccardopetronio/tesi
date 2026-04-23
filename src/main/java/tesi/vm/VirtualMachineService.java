@@ -60,5 +60,11 @@ public class VirtualMachineService {
                 this.VMRepository.delete(record);
             }
         }
-    }
+	}
+	
+	
+	public VMRecord getVMDalNome(String nomeVM) {
+		return this.VMRepository.findByNome(nomeVM);
+	}
+	
 }

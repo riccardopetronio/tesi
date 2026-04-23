@@ -49,6 +49,7 @@ public class AutenticazioneView {
         this.titolo.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
         this.rigaInput.setAlignment(Pos.CENTER);
         
+        this.cbScelta.setPromptText("Seleziona un'operazione...");
         this.cbScelta.getItems().addAll("LOG-IN", "REGISTRAZIONE");
         this.txtUsername.setPromptText("Inserisci username");
         this.rigaInput.getChildren().addAll(cbScelta, txtUsername);

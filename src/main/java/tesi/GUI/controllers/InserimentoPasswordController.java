@@ -35,14 +35,20 @@ public class InserimentoPasswordController {
 		}
 		
 		else if( this.dati.getPrimaScelta().equals("REGISTRAZIONE") ) {
+			if( !verificaInput(password) ) {
+				this.view.reSetPassword();
+				this.view.addLog("La password non puo contenere spazi, riprova");
+				return;
+			}
+			
 			boolean risultato = this.us.registrazione(this.dati.getUsername(), password);
-			this.dati.setUtente( this.us.verificaUsername(this.dati.getUsername()) );
-			if( risultato==true && verificaInput(password) ) {
+			if( risultato==true ) {
+				this.dati.setUtente(this.us.verificaUsername(this.dati.getUsername()));
 				Navigatore.mostraSceltaOperazione();
 				return;
 			}
 			this.view.reSetPassword();
-			this.view.addLog("La password non può contenere spazi, riprova");
+			this.view.addLog("Registrazione non riuscita, riprova");
 		}
 	}
 	
@@ -52,7 +58,6 @@ public class InserimentoPasswordController {
 	
 	public boolean verificaInput(String s) {
 		if( s.stripLeading().split(" ").length!=1 ) {
-			//System.err.print("\nerrore riprova, la stringa non può contenere spazi\n\n");
 			return false;
 		}
 		return true;

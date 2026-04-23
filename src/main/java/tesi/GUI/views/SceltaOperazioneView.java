@@ -45,6 +45,7 @@ public class SceltaOperazioneView {
 		this.titolo.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
         this.rigaInput.setAlignment(Pos.CENTER);
         
+        this.cbScelta.setPromptText("Seleziona un'operazione...");
         this.cbScelta.getItems().addAll("MOSTRA LE AUTOMAZIONI ESISTENTI", "MOSTRA LE AUTOMAZIONI ATTIVE", "CREA NUOVA AUTOMAZIONE", 
         		"ELIMINA AUTOMAZIONE", "MODIFICA AUTOMAZIONE");
         
@@ -64,6 +65,10 @@ public class SceltaOperazioneView {
 	public Parent asParent() {
         return this.layout;
     }
+	
+	public void pulisci() {
+        this.cbScelta.getSelectionModel().clearSelection();
+	}
 	
 	public void preparaView(String titolo) {
         this.titolo.setText(titolo);

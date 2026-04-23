@@ -37,6 +37,7 @@ public class AutenticazioneController {
 			this.dati.setUtente(u);
 			this.dati.setUsername(user);
 			Navigatore.mostraInserimentoPassword();
+			return;
 		}
 		
 		if( "REGISTRAZIONE".equals(scelta) ) {

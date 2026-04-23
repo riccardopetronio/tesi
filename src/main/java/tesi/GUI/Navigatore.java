@@ -4,11 +4,16 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import tesi.GUI.controllers.CreaAutomazioneController;
+import tesi.GUI.controllers.EliminaAutomazioneController;
+import tesi.GUI.controllers.ModificaAutomazioneController;
 import tesi.GUI.controllers.SceltaOperazioneController;
 import tesi.GUI.views.AutenticazioneView;
 import tesi.GUI.views.CreaAutomazioneView;
+import tesi.GUI.views.EliminaAutomazioneView;
 import tesi.GUI.views.SceltaOperazioneView;
 import tesi.GUI.views.InserimentoPasswordView;
+import tesi.GUI.views.ModificaAutomazioneView;
+
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Component;
 
@@ -19,78 +24,72 @@ public class Navigatore {
     public static void setStage(Stage stage) { Navigatore.stage = stage; }
     public static void setContext(ConfigurableApplicationContext context) { Navigatore.context = context; }
 
-    public static void mostraAutenticazione() {
-        // ottengo la view dal contesto Spring (così può usare @Autowired)
-    	AutenticazioneView view = context.getBean(AutenticazioneView.class);
-    	view.resetCampi();
-    	
-        Parent root = view.asParent();
-
+    
+    private static void renderizza(Parent root, double width, double height, String titolo) {
         if (stage.getScene() == null) {
-            // Se è la primissima volta che apriamo l'app, creiamo la scena
-            Scene scene = new Scene(root, 800, 600);
+            // Prima creazione
+            Scene scene = new Scene(root, width, height);
             stage.setScene(scene);
         } else {
-            // Se la scena esiste già (es. stiamo tornando indietro), 
-            // cambiamo solo la radice invece di ricreare tutta la scena
+            // Cambio contenuto
             stage.getScene().setRoot(root);
+            // AGGIORNAMENTO DIMENSIONI FORZATO
+            stage.setWidth(width);
+            stage.setHeight(height);
         }
         
-        stage.setTitle("Autenticazione");
-        stage.show();
-    }
-
-    
-    public static void mostraInserimentoPassword() {
-    	InserimentoPasswordView view = context.getBean(InserimentoPasswordView.class);
-    	view.reSetPassword();
-    	Parent root = view.asParent();
-    	
-        if (stage.getScene() == null) {
-            Scene scene = new Scene(root, 800, 600);
-            stage.setScene(scene);
-        } else {
-
-            stage.getScene().setRoot(root);
-        }
-        stage.setTitle("Inserimento password");
+        stage.setTitle(titolo); 
         stage.show();
     }
     
+    public static void mostraAutenticazione() {
+        AutenticazioneView view = context.getBean(AutenticazioneView.class);
+        view.resetCampi();
+        renderizza(view.asParent(), 800, 600, "Autenticazione"); // Dimensioni specifiche
+    }
+
     public static void mostraSceltaOperazione() {
-    	SceltaOperazioneController controller = context.getBean(SceltaOperazioneController.class);
-    	SceltaOperazioneView view = context.getBean(SceltaOperazioneView.class);
-    	Parent root = view.asParent();
-    	
-    	controller.inizializzaSchermata();
-    	
-    	if (stage.getScene() == null) {
-            Scene scene = new Scene(root, 800, 600);
-            stage.setScene(scene);
-        } else {
+        SceltaOperazioneController controller = context.getBean(SceltaOperazioneController.class);
+        SceltaOperazioneView view = context.getBean(SceltaOperazioneView.class);
+        controller.inizializzaSchermata();
+        
+        renderizza(view.asParent(), 800, 600, "Gestione Automazioni");
+    }
 
-            stage.getScene().setRoot(root);
-        }
-    	stage.setTitle("Gestione automazioni");
-        stage.show();
+    public static void mostraInserimentoPassword() {
+        InserimentoPasswordView view = context.getBean(InserimentoPasswordView.class);
+        view.reSetPassword();
+        renderizza(view.asParent(), 800, 600, "Inserimento Password");
     }
     
     public static void mostraCreazioneAutomazione() {
     	CreaAutomazioneController controller = context.getBean(CreaAutomazioneController.class);
     	CreaAutomazioneView view = context.getBean(CreaAutomazioneView.class);
-    	Parent root = view.asParent();
     	
     	controller.inizializzaSchermata();
     
-    	if (stage.getScene() == null) {
-            Scene scene = new Scene(root, 800, 600);
-            stage.setScene(scene);
-        } else {
+        renderizza(view.asParent(), 800, 600, "Creazione automazione");
 
-            stage.getScene().setRoot(root);
-        }
-    	stage.setTitle("Creazione automazione");
-        stage.show();
     }
 
+    
+    public static void mostraEliminazioneAutomazione() {
+    	EliminaAutomazioneController controller = context.getBean(EliminaAutomazioneController.class);
+    	EliminaAutomazioneView view = context.getBean(EliminaAutomazioneView.class);
+    	
+    	controller.inizializzaSchermata();
+    
+        renderizza(view.asParent(), 800, 600, "Eliminazione automazione");
+
+    }
+    
+    public static void mostraModificaAutomazione() {
+    	ModificaAutomazioneController controller = context.getBean(ModificaAutomazioneController.class);
+    	ModificaAutomazioneView view = context.getBean(ModificaAutomazioneView.class);
+    	
+    	controller.inizializzaSchermata();
+    
+        renderizza(view.asParent(), 1000, 600, "Modifica automazione");
+
+    }
 }

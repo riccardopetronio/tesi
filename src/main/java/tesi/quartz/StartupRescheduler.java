@@ -1,8 +1,8 @@
 package tesi.quartz;
 
+import java.util.HashSet;
 import java.util.List;
-
-import org.quartz.Scheduler;
+import java.util.Set;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -17,22 +17,22 @@ public class StartupRescheduler implements CommandLineRunner {
     private AutomazioneRepository ar;
     @Autowired
     private QuartzService quartzService;
-    @Autowired
-    private Scheduler scheduler;
 
     @Override
     public void run(String... args) throws SchedulerException {
-    	scheduler.clear();
         List<Automazione> tutte = ar.findAll(); 
+        Set<Integer> idAutomazioni = new HashSet<Integer>();
         
-        // metto tutte le automazioni in Quartz, sarà poi il Job a decidere se eseguirle o meno in base al campo 'abilitata'.
+        // Riconcilio Quartz con lo stato reale delle automazioni salvate nel DB.
         for (Automazione a : tutte) {
-        	
+            idAutomazioni.add(a.getId_automazione());
             try {
-                quartzService.programmaAutomazione(a);
+                quartzService.sincronizzaAutomazione(a);
             } catch (Exception e) {
             	System.err.print("\n\nerrore automazione  "+e);
             }
         }
+
+        quartzService.eliminaJobOrfani(idAutomazioni);
     }
 }
