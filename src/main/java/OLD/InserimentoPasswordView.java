@@ -1,4 +1,4 @@
-package tesi.GUI.views;
+package OLD;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -16,7 +16,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import tesi.GUI.controllers.InserimentoPasswordController;
 
 @Component @Profile("gui") @Lazy
 public class InserimentoPasswordView {
@@ -24,13 +23,13 @@ public class InserimentoPasswordView {
 	private VBox layout;
 	private Label titolo;
 	private HBox rigaPassword;
-	private PasswordField pfPassword; // Quella con i pallini
-	private TextField txtPassword; // Quella con in chiaro
-	private StackPane contenitorePassword; // Per sovrapporle perfettamente
+	private PasswordField pfPassword;
+	private TextField txtPassword;
+	private StackPane contenitorePassword;
 	private Button btnMostra;
 	private Button btnAvanti;
 	private Button btnIndietro;
-    private HBox rigaBottoni ;
+    private HBox rigaBottoni;
 
 	private ListView<String> listaLog;
 	
@@ -43,7 +42,7 @@ public class InserimentoPasswordView {
         this.rigaPassword = new HBox(15);
         this.txtPassword = new TextField();
     	this.pfPassword = new PasswordField();
-    	this.btnMostra = new Button("👁");
+    	this.btnMostra = new Button("\uD83D\uDC41");
         this.contenitorePassword = new StackPane();
         this.btnAvanti = new Button("AVANTI");
         this.btnIndietro = new Button("INDIETRO");
@@ -59,14 +58,12 @@ public class InserimentoPasswordView {
         this.rigaPassword.setAlignment(Pos.CENTER);
         this.rigaBottoni.setAlignment(Pos.CENTER);
         
-        this.txtPassword.setVisible(false); // Inizia "nascosta"
+        this.txtPassword.setVisible(false);
         this.pfPassword.setPromptText("Inserisci password");
         this.txtPassword.setPromptText("Inserisci password");
 
-        // Tutto quello che scrivo in una deve apparire nell'altra
         this.txtPassword.textProperty().bindBidirectional(this.pfPassword.textProperty());
 
-        // tasto "Mostra/Nascondi"
         this.btnMostra.setOnAction(e -> togglePassword());
         
         this.contenitorePassword.getChildren().addAll(this.txtPassword, this.pfPassword);
@@ -93,7 +90,8 @@ public class InserimentoPasswordView {
 		this.pfPassword.clear();
         this.pfPassword.setVisible(true);
         this.txtPassword.setVisible(false);
-        this.btnMostra.setText("👁");    }
+        this.btnMostra.setText("\uD83D\uDC41");
+    }
 
     public void addLog(String s) {
         this.listaLog.getItems().add(s);
@@ -101,16 +99,14 @@ public class InserimentoPasswordView {
     
     private void togglePassword() {
         if (this.pfPassword.isVisible()) {
-            // Passo alla visualizzazione in chiaro
             this.pfPassword.setVisible(false);
             this.txtPassword.setVisible(true);
-            this.btnMostra.setText("🙈"); // Cambio l'icona
-        } else {
-            // Torno ai pallini
-            this.txtPassword.setVisible(false);
-            this.pfPassword.setVisible(true);
-            this.btnMostra.setText("👁");
+            this.btnMostra.setText("\uD83D\uDE48");
+            return;
         }
+        this.txtPassword.setVisible(false);
+        this.pfPassword.setVisible(true);
+        this.btnMostra.setText("\uD83D\uDC41");
     }
 
 }

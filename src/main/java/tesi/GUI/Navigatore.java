@@ -11,7 +11,6 @@ import tesi.GUI.views.AutenticazioneView;
 import tesi.GUI.views.CreaAutomazioneView;
 import tesi.GUI.views.EliminaAutomazioneView;
 import tesi.GUI.views.SceltaOperazioneView;
-import tesi.GUI.views.InserimentoPasswordView;
 import tesi.GUI.views.ModificaAutomazioneView;
 
 import org.springframework.context.ConfigurableApplicationContext;
@@ -19,9 +18,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Navigatore {
+    // Riferimento unico alla finestra principale dell'applicazione (Stage)
     private static Stage stage;
+    // Contenitore di Spring per recuperare dinamicamente le View e i Controller (Bean) 
     private static ConfigurableApplicationContext context;
+    // Inizializza la finestra su cui il navigatore effettuerà i cambi di scena
     public static void setStage(Stage stage) { Navigatore.stage = stage; }
+    // Collega il contesto di Spring per permettere l'iniezione delle dipendenze nelle viste
     public static void setContext(ConfigurableApplicationContext context) { Navigatore.context = context; }
 
     
@@ -45,7 +48,7 @@ public class Navigatore {
     public static void mostraAutenticazione() {
         AutenticazioneView view = context.getBean(AutenticazioneView.class);
         view.resetCampi();
-        renderizza(view.asParent(), 800, 600, "Autenticazione"); // Dimensioni specifiche
+        renderizza(view.asParent(), 800, 300, "Autenticazione"); // qui definisco anche il nome della schermata
     }
 
     public static void mostraSceltaOperazione() {
@@ -53,13 +56,7 @@ public class Navigatore {
         SceltaOperazioneView view = context.getBean(SceltaOperazioneView.class);
         controller.inizializzaSchermata();
         
-        renderizza(view.asParent(), 800, 600, "Gestione Automazioni");
-    }
-
-    public static void mostraInserimentoPassword() {
-        InserimentoPasswordView view = context.getBean(InserimentoPasswordView.class);
-        view.reSetPassword();
-        renderizza(view.asParent(), 800, 600, "Inserimento Password");
+        renderizza(view.asParent(), 920, 460, "Gestione Automazioni");
     }
     
     public static void mostraCreazioneAutomazione() {
@@ -68,7 +65,7 @@ public class Navigatore {
     	
     	controller.inizializzaSchermata();
     
-        renderizza(view.asParent(), 800, 600, "Creazione automazione");
+        renderizza(view.asParent(), 850, 380, "Creazione automazione");
 
     }
 
@@ -79,7 +76,7 @@ public class Navigatore {
     	
     	controller.inizializzaSchermata();
     
-        renderizza(view.asParent(), 800, 600, "Eliminazione automazione");
+        renderizza(view.asParent(), 800, 280, "Eliminazione automazione");
 
     }
     
@@ -89,7 +86,7 @@ public class Navigatore {
     	
     	controller.inizializzaSchermata();
     
-        renderizza(view.asParent(), 1000, 600, "Modifica automazione");
+        renderizza(view.asParent(), 1100, 420, "Modifica automazione");
 
     }
 }

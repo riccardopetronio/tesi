@@ -12,7 +12,6 @@ import tesi.GUI.views.EliminaAutomazioneView;
 import tesi.automation.Automazione;
 import tesi.automation.AutomazioneService;
 
-
 @Component @Profile("gui") @Lazy
 public class EliminaAutomazioneController {
 	
@@ -27,13 +26,13 @@ public class EliminaAutomazioneController {
 
 	public void gestisciEliminazione(String automazione) {
 		if( automazione==null ) {
-			this.view.addLog("devi selezionarne una");
+			this.view.showErroreScelta("Seleziona un'automazione");
 			return;
 		}
 		String id = automazione.split(" ")[1];
 		this.as.eliminaAutomazione(Integer.parseInt(id));
-		this.view.addLog("eliminazione eseguita");
 		this.inizializzaSchermata();
+		this.view.showEsito("Eliminazione eseguita");
 	}
 	
 	public List<String> getAutomazioni() {
@@ -48,7 +47,6 @@ public class EliminaAutomazioneController {
 	public void inizializzaSchermata() {
 		this.view.preparaView(""+ this.dati.getUsername() + ", Quale vuoi eliminare?");
 	}
-	
 	
 	public void indietro() {
 		Navigatore.mostraSceltaOperazione();

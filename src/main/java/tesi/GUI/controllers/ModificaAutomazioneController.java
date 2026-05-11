@@ -28,16 +28,26 @@ public class ModificaAutomazioneController {
 	private Dati dati;
 	
 	public void gestisciModifica(String automazioneIn, String tipoOperazioneIn, String abilitazioneIn) {
-		if( automazioneIn==null || tipoOperazioneIn==null || abilitazioneIn==null ) {
-			this.view.addLog("riempi tutti i campi");
+		if( automazioneIn==null ) {
 			this.view.pulisciCampi();
+			this.view.showErroreAutomazione("Seleziona un'automazione");
+			return;
+		}
+		if( tipoOperazioneIn==null ) {
+			this.view.pulisciCampi();
+			this.view.showErroreOperazione("Seleziona un'operazione");
+			return;
+		}
+		if( abilitazioneIn==null ) {
+			this.view.pulisciCampi();
+			this.view.showErroreAbilitazione("Seleziona un'abilitazione");
 			return;
 		}
 		
 		Automazione automazione = this.getAutomazioneSelezionata(automazioneIn);
 		if( automazione==null ) {
-			this.view.addLog("automazione non trovata");
 			this.view.pulisciCampi();
+			this.view.showErroreAutomazione("Automazione non trovata");
 			return;
 		}
 		
@@ -57,7 +67,11 @@ public class ModificaAutomazioneController {
 		String orarioOut = automazione.getOrario();
 		if( this.view.getChkUsaOrario().isSelected() ) {
 			if( this.view.getChkUsaData().isSelected() && this.view.getDataPicker().getValue()==null ) {
-				this.view.addLog("se selezioni la data, devi anche sceglierla");
+				this.view.showErroreData("Scegli la data");
+				return;
+			}
+			if( this.view.getChkUsaGiornoSettimana().isSelected() && this.view.getCbGiornoSettimana().getValue()==null ) {
+				this.view.showErroreGiornoSettimana("Scegli un giorno");
 				return;
 			}
 			orarioOut = getCronExpression();
@@ -65,7 +79,7 @@ public class ModificaAutomazioneController {
 		
 		this.as.modificaAutomazione(automazione.getId_automazione(), tipologiaOut, orarioOut, abilitata);
 		this.view.preparaView("" + this.dati.getUsername() + ", Quale vuoi modificare?");
-		this.view.addLog("automazione modificata correttamente");
+		this.view.showEsito("Automazione modificata");
 	}
 	
 	public List<String> getAutomazioni() {
@@ -83,7 +97,7 @@ public class ModificaAutomazioneController {
 		}
 		Automazione automazione = this.getAutomazioneSelezionata(automazioneIn);
 		if( automazione==null ) {
-			this.view.addLog("automazione non trovata");
+			this.view.showErroreAutomazione("Automazione non trovata");
 			return;
 		}
 		
@@ -119,6 +133,7 @@ public class ModificaAutomazioneController {
 	
 	private void impostaDataEOrario(String cronExpression) {
 		this.view.impostaData(null);
+		this.view.impostaGiornoSettimana(null);
 		this.view.impostaOrario(null, null);
 		if( cronExpression==null ) {
 			return;
@@ -146,6 +161,11 @@ public class ModificaAutomazioneController {
 			}
 			catch (Exception e) {
 			}
+			return;
+		}
+		
+		if( !"?".equals(parti[5]) && !"*".equals(parti[5]) ) {
+			this.view.impostaGiornoSettimana(this.fromQuartzDayOfWeek(parti[5]));
 		}
 	}
 	
@@ -168,8 +188,46 @@ public class ModificaAutomazioneController {
 	        giornoMese = String.valueOf(ld.getDayOfMonth());
 	        mese = String.valueOf(ld.getMonthValue());
 	        anno = String.valueOf(ld.getYear());
+	        return String.format("%s %s %s %s %s %s %s", s, m, h, giornoMese, mese, giornoSett, anno);
+	    }
+	    
+	    if( this.view.getChkUsaGiornoSettimana().isSelected() && this.view.getCbGiornoSettimana().getValue()!=null ) {
+	    	giornoMese = "?";
+	    	giornoSett = this.toQuartzDayOfWeek(this.view.getCbGiornoSettimana().getValue());
 	    }
 
 	    return String.format("%s %s %s %s %s %s %s", s, m, h, giornoMese, mese, giornoSett, anno);
+	}
+
+	private String toQuartzDayOfWeek(String giorno) {
+		if( giorno==null ) {
+			return "?";
+		}
+		return switch (giorno) {
+			case "LUNEDI" -> "MON";
+			case "MARTEDI" -> "TUE";
+			case "MERCOLEDI" -> "WED";
+			case "GIOVEDI" -> "THU";
+			case "VENERDI" -> "FRI";
+			case "SABATO" -> "SAT";
+			case "DOMENICA" -> "SUN";
+			default -> "?";
+		};
+	}
+
+	private String fromQuartzDayOfWeek(String giorno) {
+		if( giorno==null ) {
+			return null;
+		}
+		return switch (giorno.toUpperCase()) {
+			case "MON" -> "LUNEDI";
+			case "TUE" -> "MARTEDI";
+			case "WED" -> "MERCOLEDI";
+			case "THU" -> "GIOVEDI";
+			case "FRI" -> "VENERDI";
+			case "SAT" -> "SABATO";
+			case "SUN" -> "DOMENICA";
+			default -> null;
+		};
 	}
 }

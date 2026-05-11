@@ -14,7 +14,6 @@ import tesi.user.UtenteService;
 @Component @Profile("gui") @Lazy
 public class AutenticazioneController {
 	
-	
 	@Autowired @Lazy
     private AutenticazioneView view;
 	
@@ -24,47 +23,62 @@ public class AutenticazioneController {
 	@Autowired @Lazy
 	private Dati dati;
 
-	public void gestisciAutenticazione(String user, String scelta) {
+	public void gestisciAutenticazione(String user, String password, String scelta) {
 		Utente u = this.us.verificaUsername(user);
 		
 		if( "LOG-IN".equals(scelta) ) {
 			if( u==null ) {
-				this.view.addLog("username non presente, riprova");
-				this.view.reSetUsername();
+				this.view.resetCredenziali();
+				this.view.showErroreUsername("Username non presente");
 				return;
 			}
 			this.dati.setPrimaScelta(scelta);
 			this.dati.setUtente(u);
 			this.dati.setUsername(user);
-			Navigatore.mostraInserimentoPassword();
+			boolean risultato = this.us.logIn(password, u.getHash(), u.getSalt());
+			if( risultato==true ) {
+				Navigatore.mostraSceltaOperazione();
+				return;
+			}
+			this.view.resetCredenziali();
+			this.view.showErrorePassword("Password errata");
 			return;
 		}
 		
 		if( "REGISTRAZIONE".equals(scelta) ) {
 			if( u!=null ) {
-				this.view.addLog("username già presente, riprova");
-				this.view.reSetUsername();
+				this.view.resetCredenziali();
+				this.view.showErroreUsername("Username gia presente");
 				return;
 			}
 			if( verificaInput(user)==false ) {
-				this.view.addLog("lo username non può contenere spazi, riprova");
-				this.view.reSetUsername();
+				this.view.resetCredenziali();
+				this.view.showErroreUsername("Username non valido");
 				return;
 			}
 			this.dati.setPrimaScelta(scelta);
 			this.dati.setUsername(user);
-			Navigatore.mostraInserimentoPassword();
+			if( verificaInput(password)==false ) {
+				this.view.resetCredenziali();
+				this.view.showErrorePassword("Password non valida");
+				return;
+			}
+			boolean risultato = this.us.registrazione(user, password);
+			if( risultato==true ) {
+				this.dati.setUtente(this.us.verificaUsername(user));
+				Navigatore.mostraSceltaOperazione();
+				return;
+			}
+			this.view.resetCredenziali();
+			this.view.showErrorePassword("Registrazione non riuscita");
 			return;
 		}
-		this.view.addLog("devi scegliere un'opzione");
-		this.view.reSetUsername();
+		this.view.resetCredenziali();
+		this.view.showErroreScelta("Seleziona un'opzione");
 	}
-	
-	
 	
 	public boolean verificaInput(String s) {
 		if( s.stripLeading().split(" ").length!=1 ) {
-			//System.err.print("\nerrore riprova, la stringa non può contenere spazi\n\n");
 			return false;
 		}
 		return true;

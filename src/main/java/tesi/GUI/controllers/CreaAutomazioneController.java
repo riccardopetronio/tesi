@@ -18,7 +18,6 @@ import tesi.vm.VirtualMachineService;
 @Component @Profile("gui") @Lazy
 public class CreaAutomazioneController {
 
-	
 	@Autowired @Lazy
     private CreaAutomazioneView view;
 	
@@ -31,21 +30,35 @@ public class CreaAutomazioneController {
 	@Autowired @Lazy
 	private AutomazioneService as;
 	
-	
 	public void creazione(String nomeVM, String tipoOperazioneIn, String abilitazione) {
-		if( nomeVM==null || tipoOperazioneIn==null || abilitazione==null ) {
-			this.view.addLog("riempi tutti i campi");
+		if( nomeVM==null ) {
 			this.view.pulisciCampi();
+			this.view.showErroreVM("Seleziona una VM");
+			return;
+		}
+		if( tipoOperazioneIn==null ) {
+			this.view.pulisciCampi();
+			this.view.showErroreOperazione("Seleziona un'operazione");
+			return;
+		}
+		if( abilitazione==null ) {
+			this.view.pulisciCampi();
+			this.view.showErroreAbilitazione("Seleziona un'abilitazione");
 			return;
 		}
 		if( !this.view.getChkUsaOrario().isSelected() ) {
-			this.view.addLog("devi selezionare un orario per creare l'automazione");
 			this.view.pulisciCampi();
+			this.view.showErroreOra("Seleziona un orario");
 			return;
 		}
 		if( this.view.getChkUsaData().isSelected() && this.view.getDataPicker().getValue()==null ) {
-			this.view.addLog("se selezioni la data, devi anche sceglierla");
 			this.view.pulisciCampi();
+			this.view.showErroreData("Scegli la data");
+			return;
+		}
+		if( this.view.getChkUsaGiornoSettimana().isSelected() && this.view.getCbGiornoSettimana().getValue()==null ) {
+			this.view.pulisciCampi();
+			this.view.showErroreGiornoSettimana("Scegli un giorno");
 			return;
 		}
 		
@@ -64,14 +77,14 @@ public class CreaAutomazioneController {
 		
 		VMRecord vm = this.vms.getVMDalNome(nomeVM);
 		if( vm==null ) {
-			this.view.addLog("vm non trovata");
 			this.view.pulisciCampi();
+			this.view.showErroreVM("VM non trovata");
 			return;
 		}
 		
 		this.as.aggiungiAutomazione(this.dati.getUtente(), vm, tipologiaOut, getCronExpression(), abilitata);
-		this.view.addLog("automazione creata correttamente");
 		this.view.pulisciCampi();
+		this.view.showEsito("Automazione creata");
 	}
 	
 	public void indietro() {
@@ -92,32 +105,49 @@ public class CreaAutomazioneController {
 	}
 	
 	public String getCronExpression() {
-		// Valori di default: asterisco (significa "sempre/ogni")
 	    String s = "00";
 	    String m = "*";
 	    String h = "*";
 	    String giornoMese = "*";
 	    String mese = "*";
-	    String giornoSett = "?"; // Obbligatorio in Quartz se usi giornoMese
+	    String giornoSett = "?";
 	    String anno = "*";
 	    
-	    // Se l'orario è abilitato, prendiamo i numeri
 	    if (this.view.getChkUsaOrario().isSelected()) {
 	        m = String.format("%02d", this.view.getSpMinuto().getValue());
 	        h = String.format("%02d", this.view.getSpOra().getValue());
 	    }
 
-	    // Se la data è abilitata, prendiamo i valori del calendario
 	    if (this.view.getChkUsaData().isSelected() && this.view.getDataPicker().getValue() != null) {
 	        LocalDate ld = this.view.getDataPicker().getValue();
 	        giornoMese = String.valueOf(ld.getDayOfMonth());
 	        mese = String.valueOf(ld.getMonthValue());
 	        anno = String.valueOf(ld.getYear());
+	        return String.format("%s %s %s %s %s %s %s", s, m, h, giornoMese, mese, giornoSett, anno);
+	    }
+	    
+	    if( this.view.getChkUsaGiornoSettimana().isSelected() && this.view.getCbGiornoSettimana().getValue()!=null ) {
+	    	giornoMese = "?";
+	    	giornoSett = this.toQuartzDayOfWeek(this.view.getCbGiornoSettimana().getValue());
 	    }
 
-	    // Componiamo la stringa finale per Quartz
-	    // Formato: secondi minuti ore giornoMese mese giornoSett anno
 	    return String.format("%s %s %s %s %s %s %s", s, m, h, giornoMese, mese, giornoSett, anno);
+	}
+
+	private String toQuartzDayOfWeek(String giorno) {
+		if( giorno==null ) {
+			return "?";
+		}
+		return switch (giorno) {
+			case "LUNEDI" -> "MON";
+			case "MARTEDI" -> "TUE";
+			case "MERCOLEDI" -> "WED";
+			case "GIOVEDI" -> "THU";
+			case "VENERDI" -> "FRI";
+			case "SABATO" -> "SAT";
+			case "DOMENICA" -> "SUN";
+			default -> "?";
+		};
 	}
 	
 }

@@ -12,7 +12,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,15 +23,17 @@ public class CreaAutomazioneView {
 	private VBox layout;
 	private Label titolo;
 	private HBox primaRigaInput, rigaBottoni, rigaData, rigaOra;
+	private HBox boxSceltaVM, boxSceltaOperazione, boxSceltaAbilitazione;
 	private ComboBox<String> cbSceltaVM;
+	private Label lblErroreVM, lblErroreOperazione, lblErroreAbilitazione, lblErroreData, lblErroreGiornoSettimana, lblErroreOra, lblEsito;
 	
 	private DatePicker dataPicker;
+	private ComboBox<String> cbGiornoSettimana;
 	private Spinner<Integer> spOra, spMinuto;
-	private CheckBox chkUsaData, chkUsaOrario;
+	private CheckBox chkUsaData, chkUsaGiornoSettimana, chkUsaOrario;
 	
 	private ComboBox<String> cbSceltaOperazione, cbSceltaAbilitazione;
 	private Button btnAvanti, btnIndietro;
-	private ListView<String> listaLog;
 	
 	@Autowired @Lazy
     private CreaAutomazioneController controller;
@@ -42,24 +43,33 @@ public class CreaAutomazioneView {
         this.titolo = new Label();
         this.primaRigaInput = new HBox(15);
         this.rigaBottoni = new HBox(15);
+        this.rigaData = new HBox(10);
+        this.rigaOra = new HBox(10);
+        this.boxSceltaVM = new HBox(8);
+        this.boxSceltaOperazione = new HBox(8);
+        this.boxSceltaAbilitazione = new HBox(8);
         this.cbSceltaVM = new ComboBox<>();
+        this.lblErroreVM = new Label();
+        this.lblErroreOperazione = new Label();
+        this.lblErroreAbilitazione = new Label();
+        this.lblErroreData = new Label();
+        this.lblErroreGiornoSettimana = new Label();
+        this.lblErroreOra = new Label();
+        this.lblEsito = new Label();
         
         this.dataPicker = new DatePicker();
-	    // Spinner per le ore (0-23) e minuti (0-59)
+        this.cbGiornoSettimana = new ComboBox<>();
 	    this.spOra = new Spinner<>(0, 23, 0);
 	    this.spMinuto = new Spinner<>(0, 59, 0);
-	    this.rigaData = new HBox(10);
-	    this.rigaOra = new HBox(10);
 
-	    
 	    this.chkUsaData = new CheckBox("Data specifica");
+	    this.chkUsaGiornoSettimana = new CheckBox("Giorno settimana");
 	    this.chkUsaOrario = new CheckBox("Orario specifico");
 	        
         this.cbSceltaOperazione = new ComboBox<>();
         this.cbSceltaAbilitazione = new ComboBox<>();
         this.btnAvanti = new Button("AVANTI");
         this.btnIndietro = new Button("INDIETRO");
-        this.listaLog = new ListView<>();
 	}
 	
 	@PostConstruct  
@@ -70,12 +80,25 @@ public class CreaAutomazioneView {
         this.rigaBottoni.setAlignment(Pos.CENTER);
         this.rigaData.setAlignment(Pos.CENTER);
         this.rigaOra.setAlignment(Pos.CENTER);
+        this.boxSceltaVM.setAlignment(Pos.CENTER_LEFT);
+        this.boxSceltaOperazione.setAlignment(Pos.CENTER_LEFT);
+        this.boxSceltaAbilitazione.setAlignment(Pos.CENTER_LEFT);
 
+        this.impostaStileErrore(this.lblErroreVM);
+        this.impostaStileErrore(this.lblErroreOperazione);
+        this.impostaStileErrore(this.lblErroreAbilitazione);
+        this.impostaStileErrore(this.lblErroreData);
+        this.impostaStileErrore(this.lblErroreGiornoSettimana);
+        this.impostaStileErrore(this.lblErroreOra);
+        this.lblEsito.setStyle("-fx-text-fill: #188038;");
         
         this.cbSceltaVM.setPromptText("Seleziona una VM");
         
         this.dataPicker.setPromptText("Scegli data...");
-        this.dataPicker.setDisable(true); // Spento di default
+        this.dataPicker.setDisable(true);
+        this.cbGiornoSettimana.setPromptText("Scegli giorno...");
+        this.cbGiornoSettimana.getItems().addAll("LUNEDI", "MARTEDI", "MERCOLEDI", "GIOVEDI", "VENERDI", "SABATO", "DOMENICA");
+        this.cbGiornoSettimana.setDisable(true);
         
         this.spOra.setDisable(true);
         this.spMinuto.setDisable(true);
@@ -84,14 +107,23 @@ public class CreaAutomazioneView {
         Label lblData = new Label("Data:");
         Label lblOra = new Label("Ora (HH:mm):");
         
-        // 2. Logica di attivazione (Binding)
-        // Se il checkbox è selezionato, il campo si abilita
         this.dataPicker.disableProperty().bind(chkUsaData.selectedProperty().not());
+        this.cbGiornoSettimana.disableProperty().bind(chkUsaGiornoSettimana.selectedProperty().not());
         this.spOra.disableProperty().bind(chkUsaOrario.selectedProperty().not());
         this.spMinuto.disableProperty().bind(chkUsaOrario.selectedProperty().not());
+        this.chkUsaData.setOnAction(e -> {
+        	if( this.chkUsaData.isSelected() ) {
+        		this.chkUsaGiornoSettimana.setSelected(false);
+        	}
+        });
+        this.chkUsaGiornoSettimana.setOnAction(e -> {
+        	if( this.chkUsaGiornoSettimana.isSelected() ) {
+        		this.chkUsaData.setSelected(false);
+        	}
+        });
         
-        this.rigaData.getChildren().addAll(chkUsaData, lblData, dataPicker);
-        this.rigaOra.getChildren().addAll(chkUsaOrario, lblOra, spOra, new Label(":"), spMinuto);
+        this.rigaData.getChildren().addAll(chkUsaData, lblData, dataPicker, this.lblErroreData, chkUsaGiornoSettimana, this.cbGiornoSettimana, this.lblErroreGiornoSettimana);
+        this.rigaOra.getChildren().addAll(chkUsaOrario, lblOra, spOra, new Label(":"), spMinuto, this.lblErroreOra);
                 
         this.cbSceltaOperazione.setPromptText("Seleziona un'operazione...");
         this.cbSceltaOperazione.getItems().addAll("ACCENSIONE", "SPEGNIMENTO");
@@ -99,23 +131,31 @@ public class CreaAutomazioneView {
         this.cbSceltaAbilitazione.setPromptText("Seleziona un'abilitazione...");
         this.cbSceltaAbilitazione.getItems().addAll("ABILITATA", "NON ABILITATA");
         
-        this.primaRigaInput.getChildren().addAll(this.cbSceltaVM, this.cbSceltaOperazione, this.cbSceltaAbilitazione);
+        this.boxSceltaVM.getChildren().addAll(this.cbSceltaVM, this.lblErroreVM);
+        this.boxSceltaOperazione.getChildren().addAll(this.cbSceltaOperazione, this.lblErroreOperazione);
+        this.boxSceltaAbilitazione.getChildren().addAll(this.cbSceltaAbilitazione, this.lblErroreAbilitazione);
+        this.primaRigaInput.getChildren().addAll(this.boxSceltaVM, this.boxSceltaOperazione, this.boxSceltaAbilitazione);
         
         this.btnAvanti.setDefaultButton(true);
         this.btnAvanti.setOnAction(e -> {
+        	this.clearFeedback();
         	this.controller.creazione(this.cbSceltaVM.getValue(), this.cbSceltaOperazione.getValue(), this.cbSceltaAbilitazione.getValue());
         });
         this.btnIndietro.setOnAction(e -> {
             this.controller.indietro();
         });
-        this.rigaBottoni.getChildren().addAll(this.btnIndietro, this.btnAvanti);
+        this.rigaBottoni.getChildren().addAll(this.btnIndietro, this.btnAvanti, this.lblEsito);
 
-        this.layout.getChildren().addAll(this.titolo, this.primaRigaInput, this.rigaData, this.rigaOra, this.rigaBottoni, this.listaLog);
+        this.layout.getChildren().addAll(this.titolo, this.primaRigaInput, this.rigaData, this.rigaOra, this.rigaBottoni);
 
 	}
 	
 	public CheckBox getChkUsaData() {
 		return chkUsaData;
+	}
+
+	public CheckBox getChkUsaGiornoSettimana() {
+		return chkUsaGiornoSettimana;
 	}
 
 	public CheckBox getChkUsaOrario() {
@@ -124,6 +164,10 @@ public class CreaAutomazioneView {
 
 	public DatePicker getDataPicker() {
 		return dataPicker;
+	}
+
+	public ComboBox<String> getCbGiornoSettimana() {
+		return cbGiornoSettimana;
 	}
 
 	public Spinner<Integer> getSpOra() {
@@ -143,21 +187,75 @@ public class CreaAutomazioneView {
 		this.cbSceltaOperazione.getSelectionModel().clearSelection();
 		this.cbSceltaVM.getSelectionModel().clearSelection();
 		this.chkUsaData.setSelected(false);
+		this.chkUsaGiornoSettimana.setSelected(false);
 		this.chkUsaOrario.setSelected(false);
 		this.dataPicker.setValue(null);
+		this.cbGiornoSettimana.getSelectionModel().clearSelection();
 		this.spOra.getValueFactory().setValue(0);
 		this.spMinuto.getValueFactory().setValue(0);
 	}
-	
-	public void addLog(String s) {
-        this.listaLog.getItems().add(s);
-    }
 	
 	public void preparaView(String titolo) {
         this.titolo.setText(titolo);
         this.cbSceltaVM.getItems().clear();
         this.cbSceltaVM.getItems().addAll(this.controller.listaVM());
-        this.listaLog.getItems().clear();
+        this.clearFeedback();
         this.pulisciCampi();
+	}
+
+	public void showErroreVM(String messaggio) {
+		this.cbSceltaVM.setStyle("-fx-border-color: #d93025; -fx-border-width: 1;");
+		this.lblErroreVM.setText(messaggio);
+	}
+
+	public void showErroreOperazione(String messaggio) {
+		this.cbSceltaOperazione.setStyle("-fx-border-color: #d93025; -fx-border-width: 1;");
+		this.lblErroreOperazione.setText(messaggio);
+	}
+
+	public void showErroreAbilitazione(String messaggio) {
+		this.cbSceltaAbilitazione.setStyle("-fx-border-color: #d93025; -fx-border-width: 1;");
+		this.lblErroreAbilitazione.setText(messaggio);
+	}
+
+	public void showErroreData(String messaggio) {
+		this.dataPicker.setStyle("-fx-border-color: #d93025; -fx-border-width: 1;");
+		this.lblErroreData.setText(messaggio);
+	}
+
+	public void showErroreGiornoSettimana(String messaggio) {
+		this.cbGiornoSettimana.setStyle("-fx-border-color: #d93025; -fx-border-width: 1;");
+		this.lblErroreGiornoSettimana.setText(messaggio);
+	}
+
+	public void showErroreOra(String messaggio) {
+		this.spOra.setStyle("-fx-border-color: #d93025; -fx-border-width: 1;");
+		this.spMinuto.setStyle("-fx-border-color: #d93025; -fx-border-width: 1;");
+		this.lblErroreOra.setText(messaggio);
+	}
+
+	public void showEsito(String messaggio) {
+		this.lblEsito.setText(messaggio);
+	}
+
+	public void clearFeedback() {
+		this.cbSceltaVM.setStyle("");
+		this.cbSceltaOperazione.setStyle("");
+		this.cbSceltaAbilitazione.setStyle("");
+		this.dataPicker.setStyle("");
+		this.cbGiornoSettimana.setStyle("");
+		this.spOra.setStyle("");
+		this.spMinuto.setStyle("");
+		this.lblErroreVM.setText("");
+		this.lblErroreOperazione.setText("");
+		this.lblErroreAbilitazione.setText("");
+		this.lblErroreData.setText("");
+		this.lblErroreGiornoSettimana.setText("");
+		this.lblErroreOra.setText("");
+		this.lblEsito.setText("");
+	}
+
+	private void impostaStileErrore(Label label) {
+		label.setStyle("-fx-text-fill: #d93025;");
 	}
 }

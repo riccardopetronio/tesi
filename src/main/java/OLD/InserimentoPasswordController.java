@@ -1,4 +1,4 @@
-package tesi.GUI.controllers;
+package OLD;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 
 import tesi.GUI.Dati;
 import tesi.GUI.Navigatore;
-import tesi.GUI.views.InserimentoPasswordView;
 import tesi.user.UtenteService;
 
 @Component @Profile("gui") @Lazy
