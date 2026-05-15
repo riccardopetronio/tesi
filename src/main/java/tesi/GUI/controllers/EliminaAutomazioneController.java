@@ -2,6 +2,7 @@ package tesi.GUI.controllers;
 
 import java.util.LinkedList;
 import java.util.List;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
@@ -30,7 +31,12 @@ public class EliminaAutomazioneController {
 			return;
 		}
 		String id = automazione.split(" ")[1];
-		this.as.eliminaAutomazione(Integer.parseInt(id));
+		try {
+			this.as.eliminaAutomazione(Integer.parseInt(id));
+		} catch (SchedulerException e) {
+			this.view.showErroreScelta("Errore nell'eliminazione da Quartz");
+			return;
+		}
 		this.inizializzaSchermata();
 		this.view.showEsito("Eliminazione eseguita");
 	}

@@ -3,6 +3,7 @@ package tesi.GUI.controllers;
 import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
@@ -82,7 +83,12 @@ public class CreaAutomazioneController {
 			return;
 		}
 		
-		this.as.aggiungiAutomazione(this.dati.getUtente(), vm, tipologiaOut, getCronExpression(), abilitata);
+		try {
+			this.as.aggiungiAutomazione(this.dati.getUtente(), vm, tipologiaOut, getCronExpression(), abilitata);
+		} catch (SchedulerException e) {
+			this.view.showErroreOra("Errore nella programmazione dell'automazione");
+			return;
+		}
 		this.view.pulisciCampi();
 		this.view.showEsito("Automazione creata");
 	}

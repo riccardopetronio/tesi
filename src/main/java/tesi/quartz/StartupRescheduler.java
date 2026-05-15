@@ -19,20 +19,46 @@ public class StartupRescheduler implements CommandLineRunner {
     private QuartzService quartzService;
 
     @Override
-    public void run(String... args) throws SchedulerException {
-        List<Automazione> tutte = ar.findAll(); 
+    public void run(String... args) {
+        List<Automazione> tutte;
+        try {
+            tutte = ar.findAll();
+        } catch (Exception e) {
+            System.err.print("\n\nerrore nel recupero delle automazioni per Quartz  " + e);
+            return;
+        }
+
         Set<Integer> idAutomazioni = new HashSet<Integer>();
-        
+
+        try {
+            quartzService.svuotaQuartz();
+        } catch (SchedulerException e) {
+            System.err.print("\n\nerrore nella pulizia delle tabelle Quartz  " + e);
+            return;
+        }
+
         // Riconcilio Quartz con lo stato reale delle automazioni salvate nel DB.
         for (Automazione a : tutte) {
             idAutomazioni.add(a.getId_automazione());
             try {
                 quartzService.sincronizzaAutomazione(a);
-            } catch (Exception e) {
+            } catch (SchedulerException e) {
             	System.err.print("\n\nerrore automazione  "+e);
+                return;
             }
         }
 
-        quartzService.eliminaJobOrfani(idAutomazioni);
+        try {
+            quartzService.eliminaJobOrfani(idAutomazioni);
+        } catch (SchedulerException e) {
+            System.err.print("\n\nerrore eliminazione job Quartz orfani  " + e);
+            return;
+        }
+
+        try {
+            quartzService.avviaScheduler();
+        } catch (SchedulerException e) {
+            System.err.print("\n\nerrore avvio scheduler Quartz  " + e);
+        }
     }
 }

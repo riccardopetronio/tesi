@@ -12,18 +12,17 @@ public class VirtualMachineService {
 	
 	@Autowired // Spring "inserisce" qui il repository automaticamente
 	private VMRepository VMRepository;
-	@Autowired
-	@Lazy
+	@Autowired @Lazy
 	private AzureService as;
 	
 	public void salvaVirMacDaAzureAlDB(String resourceGroupName) {
-
 	    System.out.println("Inizio sincronizazione a Azure...");
 
 	    for (VirtualMachine vmAzure : this.as.getListAzureVM(resourceGroupName)) {
 
 	        System.out.println("Salvataggio VM: " + vmAzure.name());
-	        VMRecord vTemp = new VMRecord(vmAzure.vmId(), vmAzure.computerName(), vmAzure.osType().toString(), vmAzure.powerState().toString());
+	        VMRecord vTemp = new VMRecord(vmAzure.vmId(), vmAzure.computerName(), 
+	        		vmAzure.osType().toString(), vmAzure.powerState().toString());
 	        
 	        this.VMRepository.save(vTemp);
 	    }  

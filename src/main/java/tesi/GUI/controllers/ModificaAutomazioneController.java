@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
@@ -77,7 +78,12 @@ public class ModificaAutomazioneController {
 			orarioOut = getCronExpression();
 		}
 		
-		this.as.modificaAutomazione(automazione.getId_automazione(), tipologiaOut, orarioOut, abilitata);
+		try {
+			this.as.modificaAutomazione(automazione.getId_automazione(), tipologiaOut, orarioOut, abilitata);
+		} catch (SchedulerException e) {
+			this.view.showErroreAutomazione("Errore nella programmazione dell'automazione");
+			return;
+		}
 		this.view.preparaView("" + this.dati.getUsername() + ", Quale vuoi modificare?");
 		this.view.showEsito("Automazione modificata");
 	}

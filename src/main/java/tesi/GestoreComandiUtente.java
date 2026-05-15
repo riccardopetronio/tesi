@@ -2,6 +2,7 @@ package tesi;
 
 import java.util.List;
 import java.util.Scanner;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import tesi.automation.Automazione;
@@ -200,14 +201,16 @@ public class GestoreComandiUtente {
 	
 	
 	public void gestisciTerzaScelta(String s) {
-		
 		if( s.equals("1") ) {
-			this.gestisciCreazioneAutomazione();
-	        System.out.print("\noperazione eseguita con successo\n");
+			try {
+				this.gestisciCreazioneAutomazione();
+		        System.out.print("\noperazione eseguita con successo\n");
+			} catch (SchedulerException e) {
+				System.err.print("\nerrore nella programmazione della automazione\n");
+			}
 			this.terzaScelta();
 			return;
 		}
-		
 		else if( s.equals("2") ) {
 			List<Automazione> listaAutomazioni = this.as.getAllAuotomations();
 			for( Automazione vTemp: listaAutomazioni ) {
@@ -217,7 +220,6 @@ public class GestoreComandiUtente {
 			this.terzaScelta();
 			return;
 		}
-		
 		else if( s.equals("3") ) {
 			for( Automazione vTemp: this.as.getAutomazioniAbilitate() ) {
 		        System.out.print("\n"+vTemp);
@@ -225,37 +227,37 @@ public class GestoreComandiUtente {
 	        System.out.print("\n");
 			this.terzaScelta();
 			return;
-			
 		}
-		
 		else if( s.equals("4") ) {
 			System.out.print("\nquale vuoi eliminare (digita l'id) --> ");
 	        String n = sc.nextLine();
-	        this.as.eliminaAutomazione(Integer.parseInt(n));
+	        try {
+	            this.as.eliminaAutomazione(Integer.parseInt(n));
+	        } catch (SchedulerException e) {
+	            System.err.print("\nerrore nell'eliminazione della automazione da Quartz\n");
+	        }
 	        this.terzaScelta();
 	        return;
 		}
-		
 		else if( s.equals("5") ) {
-			this.gestisciModificaAutomazione();
+			try {
+				this.gestisciModificaAutomazione();
+			} catch (SchedulerException e) {
+				System.err.print("\nerrore nella programmazione della automazione\n");
+			}
 			this.terzaScelta();
 			return;
 		}
-		
 		else if ( s.equals("6") ) {
 			this.secondaScelta();
 			return;
 		}
-		
 		else {
-			System.err.print("\ncomando non disponibile riprova \n");
-			this.terzaScelta();
-			return;}
-	}
+			System.err.print("\ncomando non disponibile riprova \n"); this.terzaScelta(); return;} }
 	
 	
 	
-	public void gestisciCreazioneAutomazione() {
+	public void gestisciCreazioneAutomazione() throws SchedulerException {
 		System.out.print("\nper quale vm? \n");
 		
 		List<VMRecord> listaVM = this.vms.getAllVMDalDB();
@@ -267,7 +269,6 @@ public class GestoreComandiUtente {
 		System.out.print("\n\ndigita qui la scelta --> ");
         String numVM = sc.nextLine();
         VMRecord vm = listaVM.get( Integer.parseInt(numVM)-1 );
-        
        
         System.out.print("\n(1)accensione (2)spegnimento | quale scegli? --> ");
         String tipologiaIn = sc.nextLine();
@@ -279,7 +280,6 @@ public class GestoreComandiUtente {
         else {
         	tipologiaOut = TipologiaOperazione.SPEGNIMENTO;
         }
-        
 		System.out.print("\na che ora? --> ");
         String orario = sc.nextLine();
 		
@@ -293,11 +293,10 @@ public class GestoreComandiUtente {
         else {
         	abilitazioneOut = false;
         }
-
         this.as.aggiungiAutomazione(this.getUtenteAttuale(), vm, tipologiaOut, orario, abilitazioneOut);
 	}
 
-	public void gestisciModificaAutomazione() {
+	public void gestisciModificaAutomazione() throws SchedulerException {
 		
 		for( Automazione vTemp: this.as.getAllAuotomations() ) {
 	        System.out.print("\n"+vTemp);

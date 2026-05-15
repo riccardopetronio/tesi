@@ -21,6 +21,16 @@ public class QuartzService {
     @Autowired
     private Scheduler scheduler; // L'oggetto principale di Quartz
 
+    public void svuotaQuartz() throws SchedulerException {
+        scheduler.clear();
+    }
+
+    public void avviaScheduler() throws SchedulerException {
+        if (!scheduler.isStarted()) {
+            scheduler.start();
+        }
+    }
+
     public void programmaAutomazione(Automazione automazione) throws SchedulerException {
         
     	// Dico a Quartz quale classe deve eseguire e gli passo l'ID dell'automazione da memorizzare nelle sue tabelle.
@@ -53,18 +63,14 @@ public class QuartzService {
         eliminaAutomazioneDaQuartz(automazione.getId_automazione());
     }
     
-    public void eliminaAutomazioneDaQuartz(Integer idAutomazione) {
-        try {
-            // Ricostruisco la "Targa" esatta del Job
-            JobKey chiaveJob = JobKey.jobKey("Automazione_" + idAutomazione, "GruppoVM");
-            
-            // Se esiste in Quartz, lo elimino
-            if (scheduler.checkExists(chiaveJob)) {
-                scheduler.deleteJob(chiaveJob);
-                System.out.println("[QUARTZ] Job dell'automazione " + idAutomazione + " eliminato con successo.");
-            }
-        } catch (SchedulerException e) {
-            System.err.println("[ERRORE QUARTZ] Impossibile eliminare il job " + idAutomazione + e);
+    public void eliminaAutomazioneDaQuartz(Integer idAutomazione) throws SchedulerException {
+        // Ricostruisco la "Targa" esatta del Job
+        JobKey chiaveJob = JobKey.jobKey("Automazione_" + idAutomazione, "GruppoVM");
+
+        // Se esiste in Quartz, lo elimino
+        if (scheduler.checkExists(chiaveJob)) {
+            scheduler.deleteJob(chiaveJob);
+            System.out.println("[QUARTZ] Job dell'automazione " + idAutomazione + " eliminato con successo.");
         }
     }
 
